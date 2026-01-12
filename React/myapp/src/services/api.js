@@ -26,10 +26,12 @@ export const userRegister = async (userData) => {
         credentials: 'include', 
         body: JSON.stringify(userData),
     });
+    
     if (response.ok) {
         return response.json();
     } else {
         const error = await response.json();
+        console.log('Registration error from backend:', error); 
         throw new Error(error.error || 'Failed to register');
     }
 }

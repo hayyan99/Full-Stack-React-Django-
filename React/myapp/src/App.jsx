@@ -18,7 +18,10 @@ import { fetchTransactions } from './services/api'
 
 function App() {
     const [transactions, setTransactions] = useState([])
-    const [isAuthenticated, setIsAuthenticated] = useState(false)
+    const [isAuthenticated, setIsAuthenticated] = useState(() => {
+      const user =  JSON.parse(localStorage.getItem('user'))
+      return user ? user.isLoggedIn : false
+    })
     const location = useLocation()
 
     const deletetransaction = (id) => {
@@ -64,7 +67,6 @@ function App() {
           <Route path="/analytics" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Analytics transactions={transactions} /></ProtectedRoute>} />
           <Route path="/help" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Help /></ProtectedRoute>} />
           <Route path="/privacy" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Privacy /></ProtectedRoute>} />
-
           <Route path="/login" element={<Signin onLogin={() => setIsAuthenticated(true)} />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />

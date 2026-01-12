@@ -25,24 +25,32 @@ export default function SignUp() {
 
     const validateForm = () => {
         const newErrors = {}
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+        const phoneRegex = /^\+?[1-9]\d{1,14}$/
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{6,})/
+        
         if (!formData.username.trim()) {
             newErrors.username = 'Username is required'
+        } else if (formData.username.length < 3) {
+            newErrors.username = 'Username must be at least 3 characters'
         }
 
         if (!formData.email.trim()) {
             newErrors.email = 'Email is required'
-        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-            newErrors.email = 'Email is invalid'
+        } else if (!emailRegex.test(formData.email)) {
+            newErrors.email = 'Invalid email address format'
         }
 
         if(!formData.phone.trim()) {
             newErrors.phone = 'Phone number is required'
+        } else if(!phoneRegex.test(formData.phone)){
+            newErrors.phone = 'Invalid phone number format'
         }
 
         if (!formData.password.trim()) {
             newErrors.password = 'Password is required'
-        } else if (formData.password.length < 6) {
-            newErrors.password = 'Password must be at least 6 characters'
+        } else if (!passwordRegex.test(formData.password)) {
+            newErrors.password = 'Password must contain at least 6 characters, including uppercase, lowercase, numbers, and special characters'
         }
 
         if (!formData.confirmPassword.trim()) {
@@ -159,7 +167,7 @@ export default function SignUp() {
                             <p className="text-gray-300 text-sm">Let's get started with your 30 days free trial</p>
                         </motion.div>
                         
-                        <form onSubmit={handleSubmit} className="space-y-1">
+                        <form onSubmit={handleSubmit} noValidate className="space-y-1">
                             {formFields.map((field, index) => {
                                 const Icon = field.icon;
                                 return (
@@ -188,12 +196,13 @@ export default function SignUp() {
                                                 onClick={() => handleClickToggle(field.name)}
                                                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400
                                                 hover:text-gray-200 transition-colors">
-                                                {(field.name === 'password' ? showPassword : showConfirmPassword) ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                                {(field.name === 'password' ? showPassword : showConfirmPassword) ? 
+                                                <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                                             </button>
                                         )}
                                     </div>
                                     <div className="h-4">
-                                        {errors[field.name] && <p className="text-red-400 text-xs">{errors[field.name]}</p>}
+                                        {errors[field.name] && <p className="text-red-400 text-[0.55rem]">{errors[field.name]}</p>}
                                     </div>
                                 </motion.div>
                             )})}
@@ -204,7 +213,7 @@ export default function SignUp() {
                                     initial={{ opacity: 0, y: -10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.3 }}>
-                                    <p className="text-red-400 text-sm text-center">{errors.submit}</p>
+                                    <p className="text-black text-sm text-center">{errors.submit}</p>
                                 </motion.div>
                             )}
 

@@ -117,19 +117,24 @@ def user_login(request):
         data = json.loads(request.body)
         email = data.get('email')
         password = data.get('password')
-        user = UserProfile.objects.get(email=email)
+        
+        try:
+            user = UserProfile.objects.get(email=email)
+        except UserProfile.DoesNotExist:
+            return JsonResponse({'error': 'Email is invalid'}, status=400)
+        
         if user.check_password(password):
             request.session['user_id'] = user.id
             request.session['username'] = user.username
+            request.session['email'] = user.email
             return JsonResponse({
                 'message': 'Login successful',
                 'user_id': user.id,
-                'username': user.username
+                'username': user.username,
+                'email': user.email
             })
         else:
-            return JsonResponse({'error': 'Invalid credentials'}, status=400)
-    except UserProfile.DoesNotExist:
-        return JsonResponse({'error': 'Invalid credentials'}, status=400)
+            return JsonResponse({'error': 'Password is invalid'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 

@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, Mail, Lock, CheckCircle, Sparkles } from 'lucide-react'
 import { motion , AnimatePresence } from 'framer-motion' //eslint-disable-line
 import { userLogin } from '../services/api'
-import { Link } from 'react-router-dom'
 
 const FloatingParticles = () => {
     const particles = useMemo(() => Array.from({ length: 20 }, (_, i) => ({
@@ -56,16 +55,19 @@ function Signin({ onLogin }) {
 
     const validateForm = () => {
         const newErrors = {}
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{6,})/
+
         if (!formData.email.trim()) {
             newErrors.email = 'Email is required'
-        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-            newErrors.email = 'Email is invalid'
+        } else if (!emailRegex.test(formData.email)) {
+            newErrors.email = 'Please enter a valid email address format'
         }
 
         if (!formData.password.trim()) {
             newErrors.password = 'Password is required'
-        } else if (formData.password.length < 6) {
-            newErrors.password = 'Password must be at least 6 characters'
+        }else if (!passwordRegex.test(formData.password)) {
+            newErrors.password = 'Password must contain at least 6 characters, including uppercase, lowercase, numbers, and special characters'
         }
         
         return newErrors
@@ -76,10 +78,16 @@ function Signin({ onLogin }) {
         const newErrors = validateForm()
         if (Object.keys(newErrors).length === 0) {
             try{
-                await userLogin({
+                const response = await userLogin({
                     email: formData.email,
                     password: formData.password
                 })
+                localStorage.setItem('user', JSON.stringify({
+                    user_id: response.user_id,
+                    username: response.username,
+                    email: response.email,
+                    isLoggedIn: true
+                }))
                 setIsSuccess(true)
                 onLogin?.()
                 setTimeout(() => navigate('/'), 1000)
@@ -138,6 +146,7 @@ function Signin({ onLogin }) {
                         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}>
                         <Sparkles className="w-6 h-6 text-blue-400 opacity-50" />
                     </motion.div>
+                    
                     <motion.div className="text-center mb-8"
                         initial={{ y: -20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
@@ -159,7 +168,7 @@ function Signin({ onLogin }) {
                         <p className="text-gray-300 text-sm sm:text-base">Sign in to your account</p>
                     </motion.div>
                 
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                    <form onSubmit={handleSubmit} noValidate className="space-y-6">
                     {formFields.map((field, index) => {
                         const Icon = field.icon
                         return (

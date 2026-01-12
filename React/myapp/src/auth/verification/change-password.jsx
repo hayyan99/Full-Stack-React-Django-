@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Eye, EyeOff, Mail, Lock, User, Phone, CheckCircle2, Key } from 'lucide-react'
+import { Eye, EyeOff, Lock, CheckCircle2, Key } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion' // eslint-disable-line
 import { changePassword } from '../../services/api'
 
@@ -118,6 +118,12 @@ export default function ChangePassword() {
 
     const validateForm = () => {
         const newErrors = {}
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{6,})/
+
+        if (!passwordRegex.test(formData.password)) {
+            newErrors.password = 'Password must contain at least one uppercase letter, one number, and one special character'
+        }
+
         if (!formData.password.trim()) {
             newErrors.password = 'Password is required'
         } else if (formData.password.length < 6) {
@@ -256,18 +262,23 @@ export default function ChangePassword() {
                                             hover:text-gray-200 transition-colors"
                                             whileHover={{ scale: 1.1 }}
                                             whileTap={{ scale: 0.95 }}>
-                                            {(field.name === 'password' ? showPassword : showConfirmPassword) ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                            {(field.name === 'password' ? showPassword : showConfirmPassword) ? 
+                                                <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                                         </motion.button>
                                     )}
                                 </div>
                                 
-                                {field.name === 'password' && <PasswordStrengthIndicator password={formData.password} />}
+                                {field.name === 'password' && formData.password.length > 0 && (
+                                    <div className='mt-2'>
+                                        <PasswordStrengthIndicator password={formData.password} />
+                                    </div>
+                                )}
                                 
-                                <div className="h-4">
+                                <div className="md:h-4">
                                     <AnimatePresence>
                                         {errors[field.name] && (
                                             <motion.p 
-                                                className='text-red-400 text-xs'
+                                                className='text-red-400 text-[0.6rem] md:text-[0.65rem]'
                                                 initial={{ opacity: 0, y: -10 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -10 }}

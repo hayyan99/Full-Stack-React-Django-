@@ -1,5 +1,5 @@
 import Capacity from '../components/Capacity';
-import { Wallet, ChartColumnIncreasing } from "lucide-react";
+import { Wallet, ChartColumnIncreasing, ChartNoAxesCombined } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 function Analytics({ transactions }) {
@@ -8,12 +8,12 @@ function Analytics({ transactions }) {
     const tabs = [
         { icon: <Wallet className="h-4 w-4"/>, id: "overview", label: "Overview"},
         { icon: <ChartColumnIncreasing className="h-4 w-4"/>, id: "transactions", label: "Transactions"},
-        { icon: <ChartColumnIncreasing className="h-4 w-4"/>, id: "analytics", label: "Analytics"}
+        { icon: <ChartNoAxesCombined className="h-4 w-4"/>, id: "analytics", label: "Analytics"}
     ];
 
     return (
         <div className="px-3 pt-25 sm:pt-24 w-full max-w-6xl mx-auto">
-            <div className="rounded-2xl bg-gray-100 text-white p-3 border justify-center items-center flex flex-col sm:flex-row gap-4">
+            <div className="hidden md:flex flex-col rounded-2xl bg-gray-100 text-white p-3 border justify-center items-center sm:flex-row gap-4">
                 {tabs.map((tab) => (
                     <button 
                         onClick={() => navigate(tab.id === 'overview' ? '/' : `/${tab.id}`)} 

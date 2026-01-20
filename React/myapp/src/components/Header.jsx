@@ -113,7 +113,7 @@ export default function Header({ setTransactions, isAuthenticated, setIsAuthenti
     }, [isMenuOpen]);
    
     return (
-        <div className="fixed top-0 w-full bg-gray-800 z-50">
+        <div className="w-full bg-gray-800 z-50">
             <nav className="max-w-6xl mx-auto px-3 flex items-center py-4">
                 <Link to="/" className="flex items-center">
                     <div style={{background: "linear-gradient(90deg, rgba(93, 42, 155, 1) 0%, rgba(96, 83, 237, 1) 100%)"}} className="h-10 w-10 mr-2 rounded-lg flex items-center justify-center">
@@ -202,7 +202,7 @@ export default function Header({ setTransactions, isAuthenticated, setIsAuthenti
             </nav>
 
             {isOpen && (
-                <div className="fixed inset-0 flex justify-center items-center pr-4 pl-4">
+                <div className="fixed inset-0 flex justify-center items-center pr-4 pl-4 bg-black/40 z-40">
                     <div className="bg-white rounded-lg shadow-lg w-100 p-6 relative">
                         <div className="flex gap-3">
                             <h1 className="font-bold text-lg">Add Transaction</h1>

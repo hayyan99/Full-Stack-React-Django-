@@ -24,6 +24,7 @@ function App() {
     })
     const location = useLocation()
 
+
     const deletetransaction = (id) => {
       setTransactions(transactions.filter((tran) => tran.id !== id))
     }
@@ -56,23 +57,37 @@ function App() {
       };
       getTransactions();
     }, [isAuthenticated]);
-    
+
+    useEffect(() => {
+      setTimeout(() => {
+        if (!isAuthRoute) {
+          window.scrollTo(0, 0)
+          document.documentElement.scrollTop = 0
+          document.body.scrollTop = 0
+        } else {
+          window.scrollTo(0, 0)
+        }
+      }, 100)
+    }, [location, isAuthRoute])
+
     return (
     <>
-      <div className='bg-gray-50'>
+      <div className='bg-gray-50 min-h-screen flex flex-col'>
         {!isAuthRoute && <Header setTransactions={setTransactions} isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated}/>}
-        <Routes>
-          <Route path="/" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Overview transactions={transactions} onDelete={deletetransaction} /></ProtectedRoute>} />
-          <Route path="/transactions" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Transactions transactions={transactions} onDelete={deletetransaction} /></ProtectedRoute>} />
-          <Route path="/analytics" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Analytics transactions={transactions} /></ProtectedRoute>} />
-          <Route path="/help" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Help /></ProtectedRoute>} />
-          <Route path="/privacy" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Privacy /></ProtectedRoute>} />
-          <Route path="/login" element={<Signin onLogin={() => setIsAuthenticated(true)} />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/pin" element={<Pin />} /> 
-          <Route path="/change-password" element={<ChangePassword />} />
-        </Routes>
+        <div className="flex-1">
+          <Routes>
+            <Route path="/" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Overview transactions={transactions} onDelete={deletetransaction} /></ProtectedRoute>} />
+            <Route path="/transactions" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Transactions transactions={transactions} onDelete={deletetransaction} /></ProtectedRoute>} />
+            <Route path="/analytics" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Analytics transactions={transactions} /></ProtectedRoute>} />
+            <Route path="/help" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Help /></ProtectedRoute>} />
+            <Route path="/privacy" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Privacy /></ProtectedRoute>} />
+            <Route path="/login" element={<Signin onLogin={() => setIsAuthenticated(true)} />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/pin" element={<Pin />} /> 
+            <Route path="/change-password" element={<ChangePassword />} />
+          </Routes>
+        </div>
         {!isAuthRoute && <Footer />}
       </div>
     </>

@@ -14,7 +14,7 @@ function Overview({ transactions, onDelete }) {
     ];
 
     return (
-        <div className="px-3 pt-25 sm:pt-24 w-full max-w-6xl mx-auto">
+        <div className="px-3 pt-2 sm:pt-7 w-full max-w-6xl mx-auto">
             <div className="hidden md:flex rounded-2xl bg-gray-100 text-white p-3 border justify-center items-center flex-col sm:flex-row gap-4">
                 {tabs.map((tab) => (
                     <button 

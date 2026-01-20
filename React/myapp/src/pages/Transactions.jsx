@@ -10,9 +10,9 @@ function Transactions({ transactions, onDelete }) {
         { icon: <ChartColumnIncreasing className="h-4 w-4"/>, id: "transactions", label: "Transactions"},
         { icon: <ChartNoAxesCombined className="h-4 w-4"/>, id: "analytics", label: "Analytics"}
     ];
-
+    
     return (
-        <div className="px-3 pt-25 sm:pt-24 w-full max-w-6xl mx-auto">
+        <div className="px-3 pt-2 sm:pt-7 w-full max-w-6xl mx-auto">
             <div className="hidden md:flex flex-col rounded-2xl bg-gray-100 text-white p-3 border justify-center items-center sm:flex-row gap-4">
                 {tabs.map((tab) => (
                     <button 

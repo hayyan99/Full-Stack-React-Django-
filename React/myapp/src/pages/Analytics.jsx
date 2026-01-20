@@ -12,11 +12,11 @@ function Analytics({ transactions }) {
     ];
 
     return (
-        <div className="px-3 pt-25 sm:pt-24 w-full max-w-6xl mx-auto">
+        <div className="px-3 pt-2 sm:pt-7 w-full max-w-6xl mx-auto">
             <div className="hidden md:flex flex-col rounded-2xl bg-gray-100 text-white p-3 border justify-center items-center sm:flex-row gap-4">
                 {tabs.map((tab) => (
                     <button 
-                        onClick={() => navigate(tab.id === 'overview' ? '/' : `/${tab.id}`)} 
+                        onClick={() => navigate(tab.id === 'overview' ? '/' : `/${tab.id}`) } 
                         key={tab.label} 
                         className={`rounded flex justify-center items-center font-semibold py-2 px-4 w-full cursor-pointer ${
                             tab.id === 'analytics' ? 'bg-white text-blue-500' : 'text-gray-500 hover:bg-white hover:text-blue-500'

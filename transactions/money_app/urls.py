@@ -9,5 +9,7 @@ urlpatterns = [
     path('api/transactions/<int:transaction_id>/', views.transaction_detail, name='transaction_detail'),
     path('api/forgot-password/', views.forgot_password),
     path('api/verify-pin/', views.verify_pin),
-    path('api/change-password/', views.change_password)
+    path('api/change-password/', views.change_password),
+    path('api/faqs/', views.faq_list, name='faqs'),
+    path('api/contacts/', views.contact_info, name='contacts'),
 ]

@@ -126,7 +126,7 @@ export default function Header({ setTransactions, isAuthenticated, setIsAuthenti
                 </div>
 
                 <div className="hidden md:flex md:flex-1 md:justify-center text-white font-medium">
-                    👋 Hi,<span className="ml-1 font-semibold">{user?.username}</span>
+                    👋 Hi, <span className="ml-1 font-semibold">{user?.username}</span>
                 </div>
                 
                 <div className="ml-auto hidden md:flex items-center">

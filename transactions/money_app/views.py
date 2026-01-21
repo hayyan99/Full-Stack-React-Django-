@@ -5,7 +5,7 @@ from django.core.mail import send_mail, get_connection
 from django.utils import timezone
 import json
 from django.conf import settings
-from .models import Transaction, UserProfile, PasswordResetPin
+from .models import Transaction, UserProfile, PasswordResetPin, FAQ, ContactInfo
 
 # ---------------- Transactions ----------------
 @csrf_exempt
@@ -251,3 +251,31 @@ def change_password(request):
         return JsonResponse({'error': 'Session expired. Please start over.'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
+
+@csrf_exempt
+@require_http_methods(['GET'])
+def faq_list(request):
+    faqs = FAQ.objects.filter(is_active=True)
+    data = [{
+        'id': faq.id,
+        'question': faq.question,
+        'answer': faq.answer,
+        'created_at': faq.created_at.isoformat(),
+        'updated_at': faq.updated_at.isoformat()
+    } for faq in faqs]
+    return JsonResponse({'faqs': data})
+
+
+@csrf_exempt
+@require_http_methods(['GET'])
+def contact_info(request):
+    contacts = ContactInfo.objects.filter(is_active=True)
+    data = [{
+        'id': contact.id,
+        'contact_type': contact.contact_type,
+        'label': contact.label,
+        'value': contact.value,
+        'created_at': contact.created_at.isoformat(),
+        'updated_at': contact.updated_at.isoformat()
+    } for contact in contacts]
+    return JsonResponse({'contacts': data})

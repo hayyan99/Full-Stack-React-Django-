@@ -58,3 +58,27 @@ class PasswordResetPin(models.Model):
     
     def is_expired(self):
         return timezone.now() > self.expires_at
+    
+
+class FAQ(models.Model):
+    question = models.TextField()
+    answer = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['id']
+
+class ContactInfo(models.Model):
+    contact_type = models.CharField(max_length=50)
+    label = models.CharField(max_length=50)
+    value = models.CharField(max_length=200)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['contact_type']
+
+

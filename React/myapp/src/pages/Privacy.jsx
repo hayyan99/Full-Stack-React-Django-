@@ -11,6 +11,8 @@ import {
   Scale,
   Phone,
 } from "lucide-react";
+import { fetchContactInfo } from "../services/api";
+import { useState, useEffect } from "react";
 
 function Privacy() {
   const collection = [
@@ -40,6 +42,27 @@ function Privacy() {
     { label: "Deletion", color: "bg-red-500", desc: "Request deletion of your personal data", bgcolor:"bg-gradient-to-r from-red-50 to-red-100" },
     { label: "Portability", color: "bg-purple-500", desc: "Export your data in a structured format", bgcolor:"bg-gradient-to-r from-purple-50 to-purple-100" },
   ];
+
+  // const contactData = [
+  //   { label: "Email", value: "financetracker@gmail.com" },
+  //   { label: "Phone", value: "+923034594499" },
+  //   { label: "Address", value: "123 Privacy Street, Data City, DC 12345" },
+  // ];
+
+  const [ contacts, setContacts ] = useState([]);
+  const [ error, setError ] = useState(null);
+  
+  useEffect(() => {
+      const loadContact = async () => {
+          try {
+              const response = await fetchContactInfo();
+              setContacts(response.contacts);
+          } catch (err) {
+              setError(err.message);
+          } 
+      };
+      loadContact();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -168,15 +191,18 @@ function Privacy() {
           <p className="text-gray-300 mb-6">
             If you have any questions about this Privacy Policy, please contact us:
           </p>
+
           <div className="space-y-4">
-            <div className="flex items-center space-x-4">
-              <span className="text-blue-400 font-medium">Email:</span>
-              <span className="text-white">privacy@company.com</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-blue-400 font-medium">Address:</span>
-              <span className="text-white">123 Privacy Street, Data City, DC 12345</span>
-            </div>
+            {contacts.map((contact) => (
+              <div key={contact.id} className="flex items-center space-x-4">
+                <span className="text-blue-400 font-medium">{contact.label}</span>
+                <span className="text-white text-sm md:text-[0.9rem]">{contact.value}</span>
+              </div>
+            ))}
+
+            {error && ( 
+            <p className="text-red-500">Error Loading Contact Information: {error}</p>
+            )}
           </div>
         </div>
       </div>

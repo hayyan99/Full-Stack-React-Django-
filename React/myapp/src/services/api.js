@@ -141,3 +141,23 @@ export const changePassword = async (email, pin, new_password) => {
         throw new Error(error.error || 'Failed to change password');
     }
 }
+
+export const fetchFAQs = async () => {
+    const response = await fetch(`${BASE_URL}faqs/`);
+    if (response.ok) {
+        return response.json();
+    } else {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to fetch FAQs');
+    }
+}
+
+export const fetchContactInfo = async () => {
+    const response = await fetch(`${BASE_URL}contacts/`);
+    if (response.ok) {
+        return response.json();
+    } else {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to fetch contact info');
+    }
+}

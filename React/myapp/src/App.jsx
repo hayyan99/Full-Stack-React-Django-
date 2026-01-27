@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import './App.css'
-import Header from './components/Header'
-import Footer from './components/Footer'
-import ProtectedRoute from './ProtectedRoute'
-import Overview from './pages/Overview'
-import Transactions from './pages/Transactions'
-import Analytics from './pages/Analytics'
-import Help from './pages/Help'
-import Privacy from './pages/Privacy'
+import Header from './components/header'
+import Footer from './components/footer'
+import Overview from './pages/overview'
+import Transactions from './pages/transaction'
+import Analytics from './pages/analytics'
+import Help from './pages/help'
+import Privacy from './pages/privacy'
+import Contact from './pages/contact'
 import Signin from './auth/sign-in'
 import Signup from './auth/sign-up'
 import ForgotPassword from './auth/verification/forgot-password'
@@ -16,14 +16,13 @@ import Pin from './auth/verification/pin'
 import ChangePassword from './auth/verification/change-password'
 import { fetchTransactions } from './services/api'
 
-function App() {
+export default function App() {
     const [transactions, setTransactions] = useState([])
     const [isAuthenticated, setIsAuthenticated] = useState(() => {
       const user =  JSON.parse(localStorage.getItem('user'))
       return user ? user.isLoggedIn : false
     })
     const location = useLocation()
-
 
     const deletetransaction = (id) => {
       setTransactions(transactions.filter((tran) => tran.id !== id))
@@ -76,16 +75,17 @@ function App() {
         {!isAuthRoute && <Header setTransactions={setTransactions} isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated}/>}
         <div className="flex-1">
           <Routes>
-            <Route path="/" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Overview transactions={transactions} onDelete={deletetransaction} /></ProtectedRoute>} />
-            <Route path="/transactions" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Transactions transactions={transactions} onDelete={deletetransaction} /></ProtectedRoute>} />
-            <Route path="/analytics" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Analytics transactions={transactions} /></ProtectedRoute>} />
-            <Route path="/help" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Help /></ProtectedRoute>} />
-            <Route path="/privacy" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Privacy /></ProtectedRoute>} />
+            <Route path="/" element={<Overview transactions={transactions} onDelete={deletetransaction} isAuthenticated={isAuthenticated} />}/>
+            <Route path="/transactions" element={<Transactions transactions={transactions} onDelete={deletetransaction} isAuthenticated={isAuthenticated}/>} />
+            <Route path="/analytics" element={<Analytics transactions={transactions} isAuthenticated={isAuthenticated}/>} />
+            <Route path="/help" element={<Help />} />
+            <Route path="/privacy" element={<Privacy />} />
             <Route path="/login" element={<Signin onLogin={() => setIsAuthenticated(true)} />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/pin" element={<Pin />} /> 
             <Route path="/change-password" element={<ChangePassword />} />
+            <Route path="/contact" element={<Contact />} />
           </Routes>
         </div>
         {!isAuthRoute && <Footer />}
@@ -93,6 +93,4 @@ function App() {
     </>
   )
 }
-
-export default App
 

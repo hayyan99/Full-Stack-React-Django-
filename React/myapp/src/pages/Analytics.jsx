@@ -1,8 +1,8 @@
-import Capacity from '../components/Capacity';
+import Capacity from '../components/capacity.jsx';
 import { Wallet, ChartColumnIncreasing, ChartNoAxesCombined } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-function Analytics({ transactions }) {
+export default  function Analytics({ isAuthenticated, transactions }) {
     const navigate = useNavigate();
     
     const tabs = [
@@ -10,6 +10,20 @@ function Analytics({ transactions }) {
         { icon: <ChartColumnIncreasing className="h-4 w-4"/>, id: "transactions", label: "Transactions"},
         { icon: <ChartNoAxesCombined className="h-4 w-4"/>, id: "analytics", label: "Analytics"}
     ];
+
+    if (!isAuthenticated) {
+        return (
+            <div className="px-3 pt-2 sm:pt-7 w-full max-w-6xl mx-auto">
+                <div className="text-center py-12">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">Analytics Dashboard</h2>
+                    <p className="text-gray-600 mb-6">Sign in to view your financial analytics and insights</p>
+                    <button onClick={() => navigate('/login')} className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600">
+                        Sign In
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="px-3 pt-2 sm:pt-7 w-full max-w-6xl mx-auto">
@@ -32,4 +46,3 @@ function Analytics({ transactions }) {
     );
 }
 
-export default Analytics;

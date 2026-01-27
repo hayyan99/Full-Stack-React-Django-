@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom";
-import { CirclePlus, X, Wallet, LogOut, Menu, ChartColumnIncreasing, ChartNoAxesCombined } from 'lucide-react';
+import { CirclePlus, X, Wallet, LogOut, Menu, ChartColumnIncreasing, ChartNoAxesCombined, LogIn } from 'lucide-react';
 import { createTransaction, userLogout } from "../services/api";  
 
 export default function Header({ setTransactions, isAuthenticated, setIsAuthenticated }) {
@@ -114,94 +114,129 @@ export default function Header({ setTransactions, isAuthenticated, setIsAuthenti
    
     return (
         <div className="w-full bg-gray-800 z-50">
-            <nav className="max-w-6xl mx-auto px-3 flex items-center py-4">
-                <Link to="/" className="flex items-center">
-                    <div style={{background: "linear-gradient(90deg, rgba(93, 42, 155, 1) 0%, rgba(96, 83, 237, 1) 100%)"}} className="h-10 w-10 mr-2 rounded-lg flex items-center justify-center">
-                        <Wallet size={20} className="text-white"/>
+            <div className="max-w-6xl mx-auto px-3">
+                <nav className="flex items-center py-4 justify-between relative">
+                    <div className="flex items-center">
+                        <Link to="/" className="flex items-center">
+                            <div style={{background: "linear-gradient(90deg, rgba(93, 42, 155, 1) 0%, rgba(96, 83, 237, 1) 100%)"}} className="h-10 w-10 mr-2 rounded-lg flex items-center justify-center">
+                                <Wallet size={20} className="text-white"/>
+                            </div>
+                        </Link>
+                        <div>
+                            <h1 className="text-white font-bold md:text-lg sm:text-sm text-sm">FinanceTracker</h1>
+                            <h6 className="text-gray-400 md:text-sm sm:text-xs text-xs">Manage your finances with ease</h6>
+                        </div>
                     </div>
-                </Link>
-                <div>
-                    <h1 className="text-white font-bold md:text-lg sm:text-sm text-sm">FinanceTracker</h1>
-                    <h6 className="text-gray-400 md:text-sm sm:text-xs text-xs">Manage your finances with ease</h6>
-                </div>
 
-                <div className="hidden md:flex md:flex-1 md:justify-center text-white font-medium">
-                    👋 Hi, <span className="ml-1 font-semibold">{user?.username}</span>
-                </div>
-                
-                <div className="ml-auto hidden md:flex items-center">
-                    <button onClick={() => { setIsOpen(!isOpen)}} className="flex justify-center items-center rounded-lg bg-blue-500 text-white font-semibold py-2 px-4 gap-1
-                     hover:bg-blue-700 sm:text-sm text-sm md:text-sm cursor-pointer">
-                       <CirclePlus className="h-4 w-4"/> Add Transaction
-                    </button>
-                </div>
-                
-                {isAuthenticated && (
-                    <div className="ml-3 hidden md:block cursor-pointer" onClick={async () => {
-                        try {
-                            await userLogout();
-                            setIsAuthenticated(false);
-                            localStorage.removeItem('user');
-                            navigate('/login');
-                        } catch (error) {
-                            alert('Logout failed: ' + error.message);
-                        }
-                    }}>
-                        <LogOut className="text-white w-5 h-5" />
-                    </div>
-                )}
-
-                <div className="menu-container ml-auto md:hidden relative">
-                    <Menu size={32} onClick={toggleMenu} className="text-white cursor-pointer"/>
-                    {isMenuOpen && (
-                        <>
-                            <div className="fixed inset-0 bg-black/40 z-40"></div>
-                            <div className="absolute right-0 top-10 z-50 w-64 bg-gray-800 rounded-xl shadow-xl p-4">
-                                <div className="flex mt-1">
-                                    <div className="border-b border-gray-500 pb-3 mb-3">
-                                        <p className="text-white font-semibold">{user?.username}</p>
-                                        <p className="text-gray-400 text-sm">{user?.email}</p>
-                                    </div>
-                                    <button onClick={() => {setIsMenuOpen(false)}} 
-                                    className="absolute top-6 right-4 text-gray-400 ">
-                                        <X className="w-5 h-5"/>
-                                    </button>
-                                </div>
-                                <button onClick={() => { 
-                                    setIsOpen(true);
-                                    setIsMenuOpen(false);
-                                }}
-                                className="w-full flex justify-center items-center rounded-lg bg-blue-500 text-white font-semibold py-2 px-4 gap-1
-                                hover:bg-blue-700 cursor-pointer">
-                                    <CirclePlus className="h-4 w-4"/> Add Transaction
+                    {isAuthenticated && (
+                        <div className="hidden md:flex text-white font-medium absolute left-1/2 transform -translate-x-1/2">
+                            👋 Hi, <span className="ml-1">{user?.username}</span>
+                        </div>
+                    )}
+                     
+                    <div className="flex items-center">
+                        {isAuthenticated ? (
+                            <>
+                                <button onClick={() => { setIsOpen(!isOpen)}} className="hidden md:flex justify-center items-center rounded-lg bg-blue-500 text-white font-semibold py-2 px-4 gap-1
+                                hover:bg-blue-700 sm:text-sm text-sm md:text-sm cursor-pointer">
+                                <CirclePlus className="h-4 w-4"/> Add Transaction
                                 </button>
-                                {link.map((l) => (
-                                    <Link key={l.label} to={l.to} onClick={() => {setIsMenuOpen(false)}} className="flex items-center mt-5 gap-3 px-2 py-1 text-gray-300">
-                                        {l.icon}
-                                        <p>{l.label}</p>
-                                    </Link>
-                                ))}
-                                <div className="flex items-center ml-2 mb-4 cursor-pointer mt-5 gap-1" onClick={async () => {
+                                <div className="ml-3 hidden md:block cursor-pointer" onClick={async () => {
                                     try {
                                         await userLogout();
                                         setIsAuthenticated(false);
                                         localStorage.removeItem('user');
-                                        setIsMenuOpen(false);
-                                        navigate('/login');
+                                        navigate('/');
                                     } catch (error) {
                                         alert('Logout failed: ' + error.message);
                                     }
                                 }}>
-                                    <LogOut className="w-5 h-5 text-red-500"/>
-                                    <span className="text-red-500">Logout</span>
+                                    <LogOut className="text-white w-5 h-5" />
                                 </div>
+                            </>
+                        ) : (
+                            <div className="hidden md:flex items-center gap-2">
+                                <Link to="/login" className="text-white hover:text-blue-300 font-medium">
+                                    Sign In
+                                </Link>
+                                <Link to="/signup" className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                                    Sign Up
+                                </Link>
+                            </div>
+                        )}
+                        
+                        <div className="menu-container ml-3 md:hidden relative">
+                            <Menu size={32} onClick={toggleMenu} className="text-white cursor-pointer"/>
+                    {isMenuOpen && (
+                        <>
+                            <div className="fixed inset-0 bg-black/40 z-40"></div>
+                            <div className="absolute right-0 top-10 z-50 w-64 bg-gray-800 rounded-xl shadow-xl p-4">
+                                {isAuthenticated ? (
+                                    <>
+                                        <div className="flex mt-1">
+                                            <div className="border-b border-gray-500 pb-3 mb-3">
+                                                <p className="text-white font-semibold">{user?.username}</p>
+                                                <p className="text-gray-400 text-sm">{user?.email}</p>
+                                            </div>
+                                            <button onClick={() => {setIsMenuOpen(false)}} 
+                                            className="absolute top-6 right-4 text-gray-400 ">
+                                                <X className="w-5 h-5"/>
+                                            </button>
+                                        </div>
+                                        <button onClick={() => { 
+                                            setIsOpen(true);
+                                            setIsMenuOpen(false);
+                                        }}
+                                        className="w-full flex justify-center items-center rounded-lg bg-blue-500 text-white font-semibold py-2 px-4 gap-1
+                                        hover:bg-blue-700 cursor-pointer">
+                                            <CirclePlus className="h-4 w-4"/> Add Transaction
+                                        </button>
+                                        {link.map((l) => (
+                                            <Link key={l.label} to={l.to} onClick={() => {setIsMenuOpen(false)}} className="flex items-center mt-5 gap-3 px-2 py-1 text-gray-300">
+                                                {l.icon}
+                                                <p>{l.label}</p>
+                                            </Link>
+                                        ))}
+                                        <div className="flex items-center ml-2 mb-4 cursor-pointer mt-5 gap-1" onClick={async () => {
+                                            try {
+                                                await userLogout();
+                                                setIsAuthenticated(false);
+                                                localStorage.removeItem('user');
+                                                setIsMenuOpen(false);
+                                                navigate('/');
+                                            } catch (error) {
+                                                alert('Logout failed: ' + error.message);
+                                            }
+                                        }}>
+                                            <LogOut className="w-5 h-5 text-red-500"/>
+                                            <span className="text-red-500">Logout</span>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button onClick={() => {setIsMenuOpen(false)}} 
+                                        className="absolute top-6 right-4 text-gray-400 ">
+                                            <X className="w-5 h-5"/>
+                                        </button>
+                                        <div className="mt-9 space-y-3">
+                                            <Link to="/login" onClick={() => {setIsMenuOpen(false)}} className="block w-full text-center bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">
+                                                Sign In
+                                            </Link>
+                                            <Link to="/signup" onClick={() => {setIsMenuOpen(false)}} className="block w-full text-center border border-blue-500 text-blue-500 py-2 px-4 rounded-lg hover:bg-blue-50">
+                                                Sign Up
+                                            </Link>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </>
                     )}
-                </div>
-            </nav>
+                        </div>
+                    </div>
+                </nav>
+            </div>
 
-            {isOpen && (
+            {isAuthenticated && isOpen && (
                 <div className="fixed inset-0 flex justify-center items-center pr-4 pl-4 bg-black/40 z-40">
                     <div className="bg-white rounded-lg shadow-lg w-100 p-6 relative">
                         <div className="flex gap-3">

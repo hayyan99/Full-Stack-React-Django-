@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { fetchFAQs } from '../services/api';
+import { Link } from 'react-router-dom';
+
 function Help() {
     const [ faqs, setFaqs ] = useState([]);
     const [ error, setError ] = useState(null);
@@ -39,9 +41,9 @@ function Help() {
             <div className="bg-blue-50 p-6 rounded-lg">
                 <h2 className="text-xl font-semibold text-gray-800 mb-3">Need More Help?</h2>
                 <p className="text-gray-600 mb-4">Can't find what you're looking for? Contact our support team.</p>
-                <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                <Link className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" to="/contact">
                     Contact Support
-                </button>
+                </Link>
             </div>
         </div>
     );

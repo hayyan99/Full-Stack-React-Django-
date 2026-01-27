@@ -1,8 +1,8 @@
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
-function Footer() {
-    const navigate = useNavigate();
+export default function Footer() {
+    // const navigate = useNavigate();
     const socialMedia = [
         {src: "./images/facebook.png", alt: "facebook", url: "https://www.facebook.com/"},
         {src: "./images/insta.png", alt: "instagram", url: "https://www.instagram.com/"},
@@ -17,11 +17,10 @@ function Footer() {
     return (
         <footer className="bg-gray-900 overflow-hidden mt-10">
             <div className="text-center mx-auto py-10 px-6 md:px-0 max-w-2xl">
-                <h1 className="text-white text-center font-bold text-2xl">FinanceTracker</h1>
+                <h1 className="text-white text-center font-bold text-2xl">Save Your Money</h1>
                 <p className="text-gray-400 mt-3 text-sm">Take control of your finances with our easy-to-use expense tracking platform. 
                     Monitor your spending, set budgets, and achieve your financial goals.
                 Start your journey to financial freedom today!</p>
-                <a onClick={() => {navigate('/login'); window.scrollTo(0,0);}} className="text-white border-2 rounded-full px-4 py-2 mt-4 text-sm bg-blue-700 inline-block hover:bg-blue-900 cursor-pointer">Get Started</a>
                 <div className="flex justify-center gap-6 mt-6 cursor-pointer">
                     {socialMedia.map((icon, index) => (
                         <a href={icon.url} key={index} target="_blank" rel="noopener noreferrer">
@@ -60,4 +59,3 @@ function Footer() {
     )
 }
 
-export default Footer;

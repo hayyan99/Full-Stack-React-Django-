@@ -1,10 +1,10 @@
-import Lists from "../components/Lists";
-import Boxes from "../components/Boxes";
-import Capacity from '../components/Capacity';
+import Lists from "../components/lists";
+import Boxes from "../components/boxes";
+import Capacity from '../components/capacity';
 import { Wallet, ChartColumnIncreasing, ChartNoAxesCombined } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-function Overview({ transactions, onDelete }) {
+export default function Overview({ isAuthenticated, transactions, onDelete }) {
     const navigate = useNavigate();
     
     const tabs = [
@@ -12,6 +12,20 @@ function Overview({ transactions, onDelete }) {
         { icon: <ChartColumnIncreasing className="h-4 w-4"/>, id: "transactions", label: "Transactions"},
         { icon: <ChartNoAxesCombined className="h-4 w-4"/>, id: "analytics", label: "Analytics"}
     ];
+
+    if (!isAuthenticated) {
+        return (
+            <div className="px-3 pt-2 sm:pt-7 w-full max-w-6xl mx-auto">
+                <div className="text-center py-12">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">Welcome to Your Financial Dashboard</h2>
+                    <p className="text-gray-600 mb-6">Sign in to track your transactions and manage your finances</p>
+                    <button onClick={() => navigate('/login')} className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600">
+                        Get Started
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="px-3 pt-2 sm:pt-7 w-full max-w-6xl mx-auto">
@@ -35,5 +49,3 @@ function Overview({ transactions, onDelete }) {
         </div>
     );
 }
-
-export default Overview;

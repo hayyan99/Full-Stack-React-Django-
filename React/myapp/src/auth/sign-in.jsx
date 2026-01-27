@@ -56,7 +56,6 @@ function Signin({ onLogin }) {
     const validateForm = () => {
         const newErrors = {}
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{6,})/
 
         if (!formData.email.trim()) {
             newErrors.email = 'Email is required'
@@ -66,8 +65,6 @@ function Signin({ onLogin }) {
 
         if (!formData.password.trim()) {
             newErrors.password = 'Password is required'
-        }else if (!passwordRegex.test(formData.password)) {
-            newErrors.password = 'Password must contain at least 6 characters, including uppercase, lowercase, numbers, and special characters'
         }
         
         return newErrors

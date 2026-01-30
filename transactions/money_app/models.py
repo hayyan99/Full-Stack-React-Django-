@@ -1,13 +1,19 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import timedelta
-import random, string
+import random, string, re
+
+
+def validate_phone_number(value):
+    if not re.match(r'^\+\d+$', value):
+        raise ValidationError('Phone number must start with + followed by digits only (e.g., +92xxxxxxxxx).')
 
 class UserProfile(models.Model):
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(max_length=254, unique=True)
-    phone = models.CharField(max_length=20)
+    phone = models.CharField(max_length=20, validators=[validate_phone_number])
     password = models.CharField(max_length=128)
 
     def set_password(self, raw_password):
@@ -59,7 +65,6 @@ class PasswordResetPin(models.Model):
     def is_expired(self):
         return timezone.now() > self.expires_at
     
-
 class FAQ(models.Model):
     question = models.TextField()
     answer = models.TextField()
@@ -77,6 +82,10 @@ class ContactInfo(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    def clean(self):
+        if self.contact_type.lower() == 'phone' and not re.match(r'^\+\d+$', self.value):
+            raise ValidationError({'value': 'Phone number must start with + followed by digits only (e.g., +92xxxxxxxxx).'})
 
     class Meta:
         ordering = ['contact_type']

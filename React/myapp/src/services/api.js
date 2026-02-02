@@ -1,10 +1,18 @@
 const BASE_URL = 'http://localhost:8000/api/';
 
+const getCSRFToken = async() => {
+    const response = await fetch(`${BASE_URL}csrf-token/`,{
+        credentials: 'include'
+    }); 
+    const data = await response.json();
+    return data.csrfToken;
+};
+
 export const userLogin = async (credentials) => {
     const response = await fetch(`${BASE_URL}login/`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json', 'X-CSRFToken': await getCSRFToken(),
         },
         credentials: 'include', 
         body: JSON.stringify(credentials),
@@ -16,12 +24,45 @@ export const userLogin = async (credentials) => {
         throw new Error(error.error || 'Failed to login');
     }
 }
+// export const userLogin = async (credentials) => {
+//     try {
+//         const csrfToken = await getCSRFToken();
+//         const response = await fetch(`${BASE_URL}login/`, {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'X-CSRFToken': csrfToken,
+//             },
+//             credentials: 'include', 
+//             body: JSON.stringify(credentials),
+//         });
+        
+//         // Check if response is JSON
+//         const contentType = response.headers.get('content-type');
+//         if (!contentType || !contentType.includes('application/json')) {
+//             const text = await response.text();
+//             console.error('Non-JSON response:', text);
+//             throw new Error('Server error - check console');
+//         }
+        
+//         if (response.ok) {
+//             return response.json();
+//         } else {
+//             const error = await response.json();
+//             throw new Error(error.error || 'Failed to login');
+//         }
+//     } catch (error) {
+//         console.error('Login error:', error);
+//         throw error;
+//     }
+// }
+
 
 export const userRegister = async (userData) => {
     const response = await fetch(`${BASE_URL}register/`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json', 'X-CSRFToken': await getCSRFToken(),
         },
         credentials: 'include', 
         body: JSON.stringify(userData),
@@ -52,7 +93,7 @@ export const createTransaction = async (transaction) => {
     const response = await fetch(`${BASE_URL}transactions/`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json', 'X-CSRFToken': await getCSRFToken(),
         },
         credentials: 'include', 
         body: JSON.stringify(transaction)
@@ -68,7 +109,10 @@ export const createTransaction = async (transaction) => {
 export const deleteTransaction = async (transaction) => {
     const response = await fetch(`${BASE_URL}transactions/${transaction.id}/`, {
         method: 'DELETE',
-        credentials: 'include' 
+        credentials: 'include',
+        headers: {
+            'X-CSRFToken': await getCSRFToken(),
+        },
     });
     if (response.ok) {
         return response.json();
@@ -81,7 +125,10 @@ export const deleteTransaction = async (transaction) => {
 export const userLogout = async () => {
     const response = await fetch(`${BASE_URL}logout/`, {
         method: 'POST',
-        credentials: 'include'
+        credentials: 'include',
+        headers: {
+            'X-CSRFToken': await getCSRFToken(),
+        },
     });
     if (response.ok) {
         return response.json();
@@ -95,7 +142,7 @@ export const forgotPassword = async (email) => {
     const response = await fetch(`${BASE_URL}forgot-password/`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json', 'X-CSRFToken': await getCSRFToken(),
         },
         credentials: 'include',
         body: JSON.stringify({ email }),
@@ -112,7 +159,7 @@ export const verifyPin = async (email, pin) => {
     const response = await fetch(`${BASE_URL}verify-pin/`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json', 'X-CSRFToken': await getCSRFToken(),
         },
         credentials: 'include',
         body: JSON.stringify({ email, pin }),
@@ -129,7 +176,7 @@ export const changePassword = async (email, pin, new_password) => {
     const response = await fetch(`${BASE_URL}change-password/`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json', 'X-CSRFToken': await getCSRFToken(),
         },
         credentials: 'include',
         body: JSON.stringify({ email, pin, new_password }),

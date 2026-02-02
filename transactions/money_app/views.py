@@ -4,11 +4,17 @@ from django.views.decorators.http import require_http_methods
 from django.core.mail import send_mail, get_connection
 from django.utils import timezone
 import json
+from django.middleware.csrf import get_token
 from django.conf import settings
+from .serializers import UserLoginSerializer, UserRegisterSerializer, TransactionSerializer
 from .models import Transaction, UserProfile, PasswordResetPin, FAQ, ContactInfo
 
+# -----------CSRF Exempt Decorator-----------
+@require_http_methods(["GET"])
+def csrf_token(request):
+    return JsonResponse({'csrfToken': get_token(request)})
+
 # ---------------- Transactions ----------------
-@csrf_exempt
 @require_http_methods(["GET","POST"])
 def transactions(request):
     user_id = request.session.get('user_id')
@@ -58,7 +64,7 @@ def transactions(request):
             return JsonResponse({'error': str(e)}, status=400)
 
 # ---------------- Transaction Detail ----------------
-@csrf_exempt
+
 @require_http_methods(["GET", "PUT", "DELETE"])
 def transaction_detail(request, transaction_id):
     user_id = request.session.get('user_id')
@@ -110,7 +116,7 @@ def transaction_detail(request, transaction_id):
         return JsonResponse({'message': 'Transaction deleted successfully'})
 
 # ---------------- User Auth ----------------
-@csrf_exempt
+
 @require_http_methods(["POST"])
 def user_login(request):   
     try:
@@ -138,7 +144,7 @@ def user_login(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
-@csrf_exempt
+
 @require_http_methods(["POST"])
 def register(request):
     try:
@@ -163,14 +169,14 @@ def register(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
-@csrf_exempt
+
 @require_http_methods(["POST"])
 def user_logout(request):
     request.session.flush()
     return JsonResponse({'message': 'Logout successful'})
 
 # ---------------- Password Reset ----------------
-@csrf_exempt
+
 @require_http_methods(["POST"])
 def forgot_password(request):
     try:
@@ -201,7 +207,7 @@ def forgot_password(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-@csrf_exempt
+
 @require_http_methods(["POST"])
 def verify_pin(request):
     try:
@@ -225,7 +231,7 @@ def verify_pin(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
-@csrf_exempt
+
 @require_http_methods(["POST"])
 def change_password(request):
     try:
@@ -252,7 +258,7 @@ def change_password(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
-@csrf_exempt
+
 @require_http_methods(['GET'])
 def faq_list(request):
     faqs = FAQ.objects.filter(is_active=True)
@@ -266,7 +272,7 @@ def faq_list(request):
     return JsonResponse({'faqs': data})
 
 
-@csrf_exempt
+
 @require_http_methods(['GET'])
 def contact_info(request):
     contacts = ContactInfo.objects.filter(is_active=True)

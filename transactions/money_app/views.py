@@ -42,14 +42,12 @@ def transactions(request):
 
     elif request.method == 'POST':
         try:
-            data = json.loads(request.body)
+            serializer = TransactionSerializer(data=json.loads(request.body))
+            if not serializer.is_valid():
+                return JsonResponse({'error': serializer.errors}, status=400)
+            
             transaction = Transaction.objects.create(
-                user=user,
-                title=data['title'],
-                amount=data['amount'],
-                transaction_type=data['transaction_type'],
-                category=data['category'],
-                description=data.get('description', data['title'])
+                user=user, **serializer.validated_data
             )
             return JsonResponse({
                 'id': transaction.id,
@@ -64,7 +62,6 @@ def transactions(request):
             return JsonResponse({'error': str(e)}, status=400)
 
 # ---------------- Transaction Detail ----------------
-
 @require_http_methods(["GET", "PUT", "DELETE"])
 def transaction_detail(request, transaction_id):
     user_id = request.session.get('user_id')
@@ -92,7 +89,10 @@ def transaction_detail(request, transaction_id):
 
     elif request.method == 'PUT':
         try:
-            data = json.loads(request.body)
+            serializer = TransactionSerializer(data=json.loads(request.body))
+            if not serializer.is_valid():
+                return JsonResponse({'error': serializer.errors}, status=400)
+            data = serializer.validated_data
             transaction.title = data['title']
             transaction.amount = data['amount']
             transaction.transaction_type = data['transaction_type']
@@ -116,13 +116,14 @@ def transaction_detail(request, transaction_id):
         return JsonResponse({'message': 'Transaction deleted successfully'})
 
 # ---------------- User Auth ----------------
-
 @require_http_methods(["POST"])
 def user_login(request):   
     try:
-        data = json.loads(request.body)
-        email = data.get('email')
-        password = data.get('password')
+        serializer = UserLoginSerializer(data=json.loads(request.body))
+        if not serializer.is_valid():
+            return JsonResponse({'error': serializer.errors}, status=400)
+        email = serializer.validated_data['email']
+        password = serializer.validated_data['password']
         
         try:
             user = UserProfile.objects.get(email=email)
@@ -144,16 +145,14 @@ def user_login(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
-
 @require_http_methods(["POST"])
 def register(request):
     try:
-        data = json.loads(request.body)
-        if UserProfile.objects.filter(username=data['username']).exists():
-            return JsonResponse({'error': 'Username already exists'}, status=400)
-        if UserProfile.objects.filter(email=data['email']).exists():
-            return JsonResponse({'error': 'Email already exists'}, status=400)
-
+        serializer = UserRegisterSerializer(data=json.loads(request.body))
+        if not serializer.is_valid():
+            return JsonResponse({'error': serializer.errors}, status=400)
+        
+        data = serializer.validated_data
         user = UserProfile(
             username=data['username'],
             email=data['email'],
@@ -169,14 +168,12 @@ def register(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
-
 @require_http_methods(["POST"])
 def user_logout(request):
     request.session.flush()
     return JsonResponse({'message': 'Logout successful'})
 
 # ---------------- Password Reset ----------------
-
 @require_http_methods(["POST"])
 def forgot_password(request):
     try:
@@ -207,7 +204,6 @@ def forgot_password(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-
 @require_http_methods(["POST"])
 def verify_pin(request):
     try:
@@ -230,7 +226,6 @@ def verify_pin(request):
         return JsonResponse({'error': 'Invalid PIN or email'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
-
 
 @require_http_methods(["POST"])
 def change_password(request):
@@ -258,7 +253,6 @@ def change_password(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
-
 @require_http_methods(['GET'])
 def faq_list(request):
     faqs = FAQ.objects.filter(is_active=True)
@@ -270,8 +264,6 @@ def faq_list(request):
         'updated_at': faq.updated_at.isoformat()
     } for faq in faqs]
     return JsonResponse({'faqs': data})
-
-
 
 @require_http_methods(['GET'])
 def contact_info(request):

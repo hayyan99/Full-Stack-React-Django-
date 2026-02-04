@@ -8,6 +8,7 @@ from django.middleware.csrf import get_token
 from django.conf import settings
 from .serializers import UserLoginSerializer, UserRegisterSerializer, TransactionSerializer
 from .models import Transaction, UserProfile, PasswordResetPin, FAQ, ContactInfo
+from django_ratelimit.decorators import ratelimit
 
 # -----------CSRF Exempt Decorator-----------
 @require_http_methods(["GET"])
@@ -44,7 +45,8 @@ def transactions(request):
         try:
             serializer = TransactionSerializer(data=json.loads(request.body))
             if not serializer.is_valid():
-                return JsonResponse({'error': serializer.errors}, status=400)
+                first_error = next(iter(serializer.errors.values()))[0]
+                return JsonResponse({'error': first_error}, status=400)
             
             transaction = Transaction.objects.create(
                 user=user, **serializer.validated_data
@@ -91,7 +93,8 @@ def transaction_detail(request, transaction_id):
         try:
             serializer = TransactionSerializer(data=json.loads(request.body))
             if not serializer.is_valid():
-                return JsonResponse({'error': serializer.errors}, status=400)
+                first_error = next(iter(serializer.errors.values()))[0]
+                return JsonResponse({'error': first_error}, status=400)
             data = serializer.validated_data
             transaction.title = data['title']
             transaction.amount = data['amount']
@@ -116,12 +119,16 @@ def transaction_detail(request, transaction_id):
         return JsonResponse({'message': 'Transaction deleted successfully'})
 
 # ---------------- User Auth ----------------
+@ratelimit(key='ip', rate='5/m', method='POST', block= False)
 @require_http_methods(["POST"])
-def user_login(request):   
+def user_login(request):
+    if getattr(request, 'limited', False):
+        return JsonResponse({'error': 'Too many login attempts. Please try again later.'}, status=429)
     try:
         serializer = UserLoginSerializer(data=json.loads(request.body))
         if not serializer.is_valid():
-            return JsonResponse({'error': serializer.errors}, status=400)
+            first_error = next(iter(serializer.errors.values()))[0]
+            return JsonResponse({'error': first_error}, status=400)
         email = serializer.validated_data['email']
         password = serializer.validated_data['password']
         
@@ -144,13 +151,17 @@ def user_login(request):
             return JsonResponse({'error': 'Password is invalid'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
-
+    
+@ratelimit(key='ip', rate='3/m', method='POST', block= False)
 @require_http_methods(["POST"])
 def register(request):
+    if getattr(request, 'limited', False):
+        return JsonResponse({'error': 'Too many registration attempts. Please try again later.'}, status=429)
     try:
         serializer = UserRegisterSerializer(data=json.loads(request.body))
         if not serializer.is_valid():
-            return JsonResponse({'error': serializer.errors}, status=400)
+            first_error = next(iter(serializer.errors.values()))[0]
+            return JsonResponse({'error': first_error}, status=400)
         
         data = serializer.validated_data
         user = UserProfile(
@@ -277,3 +288,4 @@ def contact_info(request):
         'updated_at': contact.updated_at.isoformat()
     } for contact in contacts]
     return JsonResponse({'contacts': data})
+

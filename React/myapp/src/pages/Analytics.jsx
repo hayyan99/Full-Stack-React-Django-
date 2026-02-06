@@ -2,7 +2,7 @@ import Capacity from '../components/capacity.jsx';
 import { Wallet, ChartColumnIncreasing, ChartNoAxesCombined } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-export default  function Analytics({ isAuthenticated, transactions }) {
+export default function Analytics({ isAuthenticated, transactions }) {
     const navigate = useNavigate();
     
     const tabs = [

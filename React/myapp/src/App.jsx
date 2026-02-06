@@ -15,6 +15,7 @@ import ForgotPassword from './auth/verification/forgot-password'
 import Pin from './auth/verification/pin'
 import ChangePassword from './auth/verification/change-password'
 import { fetchTransactions } from './services/api'
+import ChatWidget from './chatbot/chatwidget'
 
 export default function App() {
     const [transactions, setTransactions] = useState([])
@@ -87,6 +88,7 @@ export default function App() {
             <Route path="/change-password" element={<ChangePassword />} />
             <Route path="/contact" element={<Contact />} />
           </Routes>
+          <ChatWidget />
         </div>
         {!isAuthRoute && <Footer />}
       </div>

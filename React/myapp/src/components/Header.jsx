@@ -113,7 +113,7 @@ export default function Header({ setTransactions, isAuthenticated, setIsAuthenti
     }, [isMenuOpen]);
    
     return (
-        <div className="w-full bg-gray-800 z-50">
+        <div className="w-full bg-gray-900 relative z-30">
             <div className="max-w-6xl mx-auto px-3">
                 <nav className="flex items-center py-4 justify-between relative">
                     <div className="flex items-center">

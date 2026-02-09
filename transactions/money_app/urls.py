@@ -13,4 +13,5 @@ urlpatterns = [
     path('api/change-password/', views.change_password),
     path('api/faqs/', views.faq_list, name='faqs'),
     path('api/contacts/', views.contact_info, name='contacts'),
+    path('api/chatbot/', views.chatbot_query, name='chatbot_query'),
 ]

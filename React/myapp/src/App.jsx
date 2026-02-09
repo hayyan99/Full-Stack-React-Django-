@@ -88,7 +88,7 @@ export default function App() {
             <Route path="/change-password" element={<ChangePassword />} />
             <Route path="/contact" element={<Contact />} />
           </Routes>
-          <ChatWidget />
+          {isAuthenticated && <ChatWidget />}
         </div>
         {!isAuthRoute && <Footer />}
       </div>

@@ -9,6 +9,8 @@ from django.conf import settings
 from .serializers import UserLoginSerializer, UserRegisterSerializer, TransactionSerializer
 from .models import Transaction, UserProfile, PasswordResetPin, FAQ, ContactInfo
 from django_ratelimit.decorators import ratelimit
+from .chatbot_services import get_chatbot_response
+from .models import ChatMessage
 
 # -----------CSRF Exempt Decorator-----------
 @require_http_methods(["GET"])
@@ -288,4 +290,56 @@ def contact_info(request):
         'updated_at': contact.updated_at.isoformat()
     } for contact in contacts]
     return JsonResponse({'contacts': data})
+
+@require_http_methods(["POST"])
+def chatbot_query(request):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        return JsonResponse({'error': 'Authentication required'}, status=401)
+    
+    try:
+        user = UserProfile.objects.get(id=user_id)
+        data = json.loads(request.body)
+        user_message = data.get('message', '')
+        session_id = data.get('session_id', 'default')
+        
+        if not user_message:
+            return JsonResponse({'error': 'Message is required'}, status=400)
+        
+        # Get last 5 messages for context
+        recent_messages = ChatMessage.objects.filter(
+            user=user, 
+            session_id=session_id
+        )[:5]
+        
+        chat_history = [
+            {'user': msg.message, 'bot': msg.response} 
+            for msg in reversed(recent_messages)
+        ]
+        
+        # Get user transaction context
+        transactions = Transaction.objects.filter(user=user)[:10]
+        total_income = sum(t.amount for t in transactions if t.transaction_type == 'income')
+        total_expense = sum(t.amount for t in transactions if t.transaction_type == 'expense')
+        
+        user_context = f"User's recent data: Total income: {total_income}PKR, Total expenses: {total_expense}PKR"
+        
+        # Get response
+        response = get_chatbot_response(user_message, chat_history, user_context)
+        
+        # Save to database
+        ChatMessage.objects.create(
+            user=user,
+            message=user_message,
+            response=response,
+            session_id=session_id
+        )
+        
+        return JsonResponse({
+            'response': response,
+            'timestamp': timezone.now().isoformat()
+        })
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 

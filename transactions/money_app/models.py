@@ -90,3 +90,12 @@ class ContactInfo(models.Model):
         ordering = ['contact_type']
 
 
+class ChatMessage(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    message = models.TextField()
+    response = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    session_id = models.CharField(max_length=100)
+    
+    class Meta:
+        ordering = ['-timestamp']

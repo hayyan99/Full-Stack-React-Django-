@@ -2,6 +2,7 @@ import { useState } from 'react'
 import ChatHeader from './chatheader'
 import ChatBody from './chatbody'
 import ChatIntro from './chatintro'
+import { sendChatMessage } from '../services/chatapi'
 
 export default function ChatWindow() {
   const [ started, setStarted ] = useState(false);
@@ -9,10 +10,12 @@ export default function ChatWindow() {
     { 
       id: 1,
       sender: "bot", 
-      text: "Hi, I'm your personal AI buddy. How can I help you?", 
+      text: "Hi, I'm your financial assistant. How can I help you today?", 
       time: getTime(),
     },
   ])
+  const [ sessionId ] = useState(() => `session_${Date.now()}`);
+  const [ loading, setLoading ] = useState(false);
 
   function getTime() {
     const date = new Date();
@@ -21,8 +24,8 @@ export default function ChatWindow() {
       minute: '2-digit' });
   }
   
-  const sendMessage = (text) => {
-    if (!text.trim()) return;
+  const sendMessage = async (text) => {
+    if (!text.trim() || loading) return;
 
     const userMessage = {
       id: Date.now(),
@@ -31,16 +34,28 @@ export default function ChatWindow() {
       time: getTime(),
     }
     setMessages((prev) => [...prev, userMessage])
+    setLoading(true);
 
-    setTimeout(() => {
+    try {
+      const response = await sendChatMessage(text, sessionId);
       setMessages((prev) => [...prev, {
           id: Date.now() + 1,
           sender: "bot",
-          text: "Got it. Let me give you information.",
+          text: response.response,
           time: getTime(),
         },
       ])
-    }, 1000)
+    } catch {
+      setMessages((prev) => [...prev, {
+          id: Date.now() + 1,
+          sender: "bot",
+          text: "Sorry, I'm having trouble connecting. Please try again.",
+          time: getTime(),
+        },
+      ])
+    } finally {
+      setLoading(false);
+    }
   }
   
   return (
@@ -48,7 +63,7 @@ export default function ChatWindow() {
       {!started ? (<ChatIntro onStart={() => setStarted(true)} />) : (
         <div className="flex flex-col h-full">
           <ChatHeader />
-          <ChatBody messages={messages} onSend={sendMessage} />
+          <ChatBody messages={messages} onSend={sendMessage} loading={loading} />
         </div>
       )}
     </div>

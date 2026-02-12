@@ -318,12 +318,21 @@ def chatbot_query(request):
         ]
         
         # Get user transaction context
-        transactions = Transaction.objects.filter(user=user)[:10]
+        transactions = Transaction.objects.filter(user=user)[:20]
         total_income = sum(t.amount for t in transactions if t.transaction_type == 'income')
         total_expense = sum(t.amount for t in transactions if t.transaction_type == 'expense')
         
-        user_context = f"User's recent data: Total income: {total_income}PKR, Total expenses: {total_expense}PKR"
-        
+        # Category breakdown
+        from collections import defaultdict
+        expenses_by_category = defaultdict(float)
+        for t in transactions:
+            if t.transaction_type == 'expense':
+                expenses_by_category[t.category] += t.amount
+
+        category_text = ", ".join([f"{cat}: {amt}PKR" for cat, amt in expenses_by_category.items()])
+
+        user_context = f"User's recent data: Total income: {total_income}PKR, Total expenses: {total_expense}PKR. Expense breakdown by category: {category_text if category_text else 'No expenses recorded yet'}"
+
         # Get response
         response = get_chatbot_response(user_message, chat_history, user_context)
         
@@ -337,7 +346,7 @@ def chatbot_query(request):
         
         return JsonResponse({
             'response': response,
-            'timestamp': timezone.now().isoformat()
+            'timestamp': timezone.now().strftime("%Y-%m-%d %I:%M:%S %p")
         })
         
     except Exception as e:

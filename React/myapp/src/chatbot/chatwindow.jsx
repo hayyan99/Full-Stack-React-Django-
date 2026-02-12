@@ -19,9 +19,11 @@ export default function ChatWindow() {
 
   function getTime() {
     const date = new Date();
-    return date.toLocaleTimeString([], { 
+    return date.toLocaleTimeString('en-US', { 
       hour: '2-digit', 
-      minute: '2-digit' });
+      minute: '2-digit'
+      
+    });
   }
   
   const sendMessage = async (text) => {

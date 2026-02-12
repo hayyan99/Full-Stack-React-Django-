@@ -16,7 +16,7 @@ export default function ChatBody({ messages, onSend, loading }) {
               <p className={`text-xs text-zinc-400 mb-1 ${msg.sender === "user" ? "text-right" : ""}`}>
                 {msg.sender === "user" ? "You" : "AI"}
               </p>
-              <div className={`px-4 py-2 rounded-2xl shadow text-white text-sm ${msg.sender === "user" ? "bg-blue-500 rounded-tr-sm ml-1" : "bg-white/10 backdrop-blur-md rounded-tl-sm"}`}>
+              <div className={`px-4 py-2 rounded-2xl shadow text-white text-sm ${msg.sender === "user" ? "bg-blue-500 rounded-tr-sm ml-1" : "bg-white/10 backdrop-blur-md rounded-tl-sm"} whitespace-pre-line`}>
                 {msg.text}
               </div>
               <p className={`text-[10px] text-zinc-400 mt-1 ${msg.sender === "user" ? "text-right mr-1" : "ml-1"}`}>

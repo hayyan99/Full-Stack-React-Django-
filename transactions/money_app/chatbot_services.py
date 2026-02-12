@@ -21,6 +21,10 @@ def get_chatbot_response(user_message, chat_history, user_context=""):
         - For financial questions, provide helpful advice about budgeting, saving, and managing money
         - If user asks about their transactions or finances, use the financial data provided above
         - Keep responses concise and friendly
+        - If user asks about specific transactions, use the financial data provided
+        - If user asks about budgeting or saving tips, provide general financial advice
+        - Always be helpful and encouraging about personal finance management
+        - Use natural paragraphs and formatting as appropriate
 
         Answer:"""
                 

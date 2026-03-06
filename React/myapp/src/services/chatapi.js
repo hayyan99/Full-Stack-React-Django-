@@ -2,12 +2,12 @@ import constant from './constant';
 
 const BASE_URL = constant.BASE_URL;
 
-const getCSRFToken = async() => {
-    const response = await fetch(`${BASE_URL}csrf-token/`,{
-        credentials: 'include'
-    }); 
-    const data = await response.json();
-    return data.csrfToken;
+const getCSRFToken = async () => {
+  const response = await fetch(`${BASE_URL}csrf-token/`, {
+    credentials: 'include'
+  });
+  const data = await response.json();
+  return data.csrfToken;
 };
 
 export const sendChatMessage = async (message, sessionId) => {

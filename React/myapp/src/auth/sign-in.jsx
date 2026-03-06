@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, Mail, Lock, CheckCircle, Sparkles } from 'lucide-react'
-import { motion , AnimatePresence } from 'framer-motion' //eslint-disable-line
+import { motion, AnimatePresence } from 'framer-motion' //eslint-disable-line
 import { userLogin } from '../services/api'
 
 const FloatingParticles = () => {
@@ -49,8 +49,8 @@ function Signin({ onLogin }) {
     const [isSuccess, setIsSuccess] = useState(false)
 
     const handleInputChange = (e) => {
-        const {name , value} = e.target
-        setFormData(prev => ({...prev, [name] : value}));
+        const { name, value } = e.target
+        setFormData(prev => ({ ...prev, [name]: value }));
     }
 
     const validateForm = () => {
@@ -66,15 +66,15 @@ function Signin({ onLogin }) {
         if (!formData.password.trim()) {
             newErrors.password = 'Password is required'
         }
-        
+
         return newErrors
     }
 
-    const handleSubmit = async (e) => { 
-        e.preventDefault() 
+    const handleSubmit = async (e) => {
+        e.preventDefault()
         const newErrors = validateForm()
         if (Object.keys(newErrors).length === 0) {
-            try{
+            try {
                 const response = await userLogin({
                     email: formData.email,
                     password: formData.password
@@ -104,14 +104,16 @@ function Signin({ onLogin }) {
 
     const formFields = [
         { name: 'email', type: 'email', label: 'Email', placeholder: 'Enter your email', icon: Mail },
-        { name: 'password', type: showPassword ? 'text' : 'password', label: 'Password', placeholder: 'Enter your password',
-            icon: Lock, hasToggle: true }
+        {
+            name: 'password', type: showPassword ? 'text' : 'password', label: 'Password', placeholder: 'Enter your password',
+            icon: Lock, hasToggle: true
+        }
     ]
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-gray-800 relative">
             <FloatingParticles />
-            
+
             <AnimatePresence>
                 {isSuccess && (
                     <motion.div
@@ -130,27 +132,27 @@ function Signin({ onLogin }) {
                 )}
             </AnimatePresence>
 
-            <motion.div 
+            <motion.div
                 className="w-full max-w-md mx-auto relative z-10"
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.8 }}>
-                    
+
                 <div className="bg-gray-700 p-6 sm:p-10 rounded-2xl shadow-xl border border-gray-600 relative overflow-hidden">
-                    <motion.div 
+                    <motion.div
                         className="absolute top-4 right-4"
                         animate={{ rotate: 360 }}
                         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}>
                         <Sparkles className="w-6 h-6 text-blue-400 opacity-50" />
                     </motion.div>
-                    
+
                     <motion.div className="text-center mb-8"
                         initial={{ y: -20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.2, duration: 0.6 }}>
-                        <motion.div 
+                        <motion.div
                             className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4"
-                            animate={{ 
+                            animate={{
                                 scale: [1, 1.1, 1],
                                 boxShadow: [
                                     "0 0 0 0 rgba(59, 130, 246, 0.7)",
@@ -164,12 +166,12 @@ function Signin({ onLogin }) {
                         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Welcome Back</h1>
                         <p className="text-gray-300 text-sm sm:text-base">Sign in to your account</p>
                     </motion.div>
-                
+
                     <form onSubmit={handleSubmit} noValidate className="space-y-6">
-                    {formFields.map((field, index) => {
-                        const Icon = field.icon
-                        return (
-                                <motion.div 
+                        {formFields.map((field, index) => {
+                            const Icon = field.icon
+                            return (
+                                <motion.div
                                     key={field.name}
                                     initial={{ y: 20, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
@@ -177,17 +179,16 @@ function Signin({ onLogin }) {
                                     <label className="block text-sm font-medium text-gray-300 mb-2">{field.label}</label>
                                     <div className="relative">
                                         <Icon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                                        <motion.input 
+                                        <motion.input
                                             type={field.type}
                                             name={field.name}
                                             value={formData[field.name]}
                                             onChange={handleInputChange}
-                                            className={`w-full pl-10 ${field.hasToggle ? 'pr-12' : 'pr-4'} py-3 border rounded-lg bg-gray-600 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 ${
-                                                errors[field.name] ? 'border-red-500' : 'border-gray-300'
-                                            }`}
+                                            className={`w-full pl-10 ${field.hasToggle ? 'pr-12' : 'pr-4'} py-3 border rounded-lg bg-gray-600 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 ${errors[field.name] ? 'border-red-500' : 'border-gray-300'
+                                                }`}
                                             placeholder={field.placeholder}
                                             whileFocus={{ scale: 1.02 }}
-                                            transition={{ duration: 0.2 }}/>
+                                            transition={{ duration: 0.2 }} />
                                         {field.hasToggle && (
                                             <motion.button
                                                 type="button"
@@ -203,17 +204,17 @@ function Signin({ onLogin }) {
                                         {errors[field.name] && <p className="text-red-400 text-xs">{errors[field.name]}</p>}
                                     </div>
                                 </motion.div>
-                        )
-                    })}
+                            )
+                        })}
 
-                        <motion.div 
+                        <motion.div
                             className="flex items-center justify-between"
                             initial={{ y: 20, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
                             transition={{ delay: 0.5, duration: 0.5 }}>
                             <label className="flex items-center">
                                 <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)}
-                                    className="w-4 h-4 accent-blue-500 border-gray-500 rounded bg-gray-600"/>
+                                    className="w-4 h-4 accent-blue-500 border-gray-500 rounded bg-gray-600" />
                                 <span className="ml-2 text-xs sm:text-sm text-gray-300">Remember me</span>
                             </label>
                             <motion.button
@@ -226,7 +227,7 @@ function Signin({ onLogin }) {
                         </motion.div>
 
                         {errors.submit && (
-                            <motion.div 
+                            <motion.div
                                 className="mb-4 p-3 bg-red-500 bg-opacity-20 border border-red-500 rounded-lg"
                                 initial={{ opacity: 0, y: -10 }}
                                 animate={{ opacity: 1, y: 0 }}
@@ -235,7 +236,7 @@ function Signin({ onLogin }) {
                             </motion.div>
                         )}
 
-                        <motion.button 
+                        <motion.button
                             type="submit"
                             className="w-full bg-blue-600 text-white font-semibold py-3 px-4 
                             rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all duration-200 transform hover:scale-[1.02] cursor-pointer text-sm sm:text-base"
@@ -246,23 +247,23 @@ function Signin({ onLogin }) {
                             whileTap={{ scale: 0.98 }}>
                             Sign In
                         </motion.button>
-                </form>
+                    </form>
 
-                        <motion.div 
-                            className="mt-6 text-center"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.8, duration: 0.5 }}>
-                            <p className="text-gray-300 text-xs sm:text-sm">
-                                Don't have an account?
-                                <motion.button 
-                                    onClick={() => navigate('/signup')}
-                                    className="text-blue-400 hover:text-blue-300 font-medium transition-colors cursor-pointer ml-1"
-                                    whileHover={{ scale: 1.05 }}>
-                                    Sign up
-                                </motion.button>
-                            </p>
-                        </motion.div>
+                    <motion.div
+                        className="mt-6 text-center"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.8, duration: 0.5 }}>
+                        <p className="text-gray-300 text-xs sm:text-sm">
+                            Don't have an account?
+                            <motion.button
+                                onClick={() => navigate('/signup')}
+                                className="text-blue-400 hover:text-blue-300 font-medium transition-colors cursor-pointer ml-1"
+                                whileHover={{ scale: 1.05 }}>
+                                Sign up
+                            </motion.button>
+                        </p>
+                    </motion.div>
                 </div>
             </motion.div>
         </div>

@@ -7,21 +7,21 @@ import { forgotPassword } from '../../services/api'
 const AnimatedLockIllustration = () => {
     return (
         <div className="flex justify-center mb-6">
-            <motion.div 
+            <motion.div
                 className="relative"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.3, type: "spring", stiffness: 200 }}>
                 <motion.div
                     className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center"
-                    animate={{ 
+                    animate={{
                         rotate: [0, -10, 10, 0],
                         scale: [1, 1.05, 1]
                     }}
                     transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}>
                     <Shield className="w-10 h-10 text-white" />
                 </motion.div>
-                
+
                 {/* Floating dots around the lock */}
                 {[...Array(6)].map((_, i) => (
                     <motion.div
@@ -41,7 +41,7 @@ const AnimatedLockIllustration = () => {
                             repeat: Infinity,
                             ease: "easeInOut"
                         }}
-                        />
+                    />
                 ))}
             </motion.div>
         </div>
@@ -67,8 +67,8 @@ export default function ForgotPassword() {
     // }, [])
 
     const handleInputChange = (e) => {
-        const {name , value} = e.target
-        setFormData(prev => ({...prev, [name] : value}));
+        const { name, value } = e.target
+        setFormData(prev => ({ ...prev, [name]: value }));
     }
 
     const validateForm = () => {
@@ -81,12 +81,12 @@ export default function ForgotPassword() {
         return newErrors
     }
 
-    const handleSubmit = async (e) => { 
-        e.preventDefault() 
+    const handleSubmit = async (e) => {
+        e.preventDefault()
         const newErrors = validateForm()
         if (Object.keys(newErrors).length === 0) {
             setIsLoading(true)
-            try{
+            try {
                 await forgotPassword(formData.email)
                 sessionStorage.setItem('resetEmail', formData.email)
                 setIsSuccess(true)
@@ -102,12 +102,12 @@ export default function ForgotPassword() {
     }
 
     const formFields = [
-        { 
-            name: 'email', 
-            type: 'email', 
-            label: 'Email', 
-            placeholder: 'Enter your email', 
-            icon: Mail 
+        {
+            name: 'email',
+            type: 'email',
+            label: 'Email',
+            placeholder: 'Enter your email',
+            icon: Mail
         },
     ]
 
@@ -132,7 +132,7 @@ export default function ForgotPassword() {
                     </motion.div>
                 )}
             </AnimatePresence>
-            <motion.div 
+            <motion.div
                 className="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-purple-900/20"
                 animate={{
                     background: [
@@ -141,9 +141,9 @@ export default function ForgotPassword() {
                         "linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1))"
                     ]
                 }}
-                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}/>
-            
-            <motion.div 
+                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} />
+
+            <motion.div
                 className="flex justify-center items-center relative z-10"
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -151,63 +151,63 @@ export default function ForgotPassword() {
                 <div className="bg-gray-700/90 backdrop-blur-sm p-10 rounded-2xl shadow-xl w-full max-w-lg h-full border border-gray-600">
                     <AnimatedLockIllustration />
                     <motion.div className="text-center mb-8"
-                    initial={{ y: -20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.2, duration: 0.6 }}>
+                        initial={{ y: -20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.2, duration: 0.6 }}>
                         <div className="text-center mb-8">
                             <h1 className="text-3xl font-bold text-white mb-2">Forgot Password</h1>
-                            <p className="text-gray-300">Please enter your registered email ID.</p>            
+                            <p className="text-gray-300">Please enter your registered email ID.</p>
                             <p className="text-gray-300 text-sm">We will send a verification code to your registered email ID.</p>
                         </div>
                     </motion.div>
-                    
+
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {formFields.map((field, index) => {
                             const Icon = field.icon;
                             return (
-                            <motion.div 
-                                key={field.name}
-                                initial={{ x: -20, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                transition={{ delay: 0.4 + index * 0.1, duration: 0.5 }}>
-                                <div className="relative group">
-                                    <motion.div
-                                        className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"
-                                        whileHover={{ scale: 1.1, color: '#60A5FA' }}
-                                        transition={{ duration: 0.2 }}>
-                                        <Icon className="w-5 h-5" />
-                                    </motion.div>
-                                    <motion.input 
-                                        type={field.type} 
-                                        name={field.name}
-                                        value={formData[field.name] }
-                                        onChange={handleInputChange}
-                                        disabled={isLoading}
-                                        className={`w-full pl-10 pr-4 py-3 border bg-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                                        transition-all duration-300 ${
-                                            errors[field.name] ? 'border-red-500 shake' : 'border-gray-300'
-                                        } group-hover:border-blue-400`}
-                                        placeholder={field.placeholder}
-                                        whileFocus={{ scale: 1.02 }}
-                                        transition={{ duration: 0.2 }}/>
-                                </div>
-                                <AnimatePresence>
-                                    {errors[field.name] && (
-                                        <motion.p 
-                                            className="text-red-400 text-sm mt-1"
-                                            initial={{ opacity: 0, y: -10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: -10 }}
-                                            transition={{ duration: 0.3 }}>
-                                            {errors[field.name]}
-                                        </motion.p>
-                                    )}
-                                </AnimatePresence>
-                            </motion.div>
-                        )})}
+                                <motion.div
+                                    key={field.name}
+                                    initial={{ x: -20, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 0.4 + index * 0.1, duration: 0.5 }}>
+                                    <div className="relative group">
+                                        <motion.div
+                                            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"
+                                            whileHover={{ scale: 1.1, color: '#60A5FA' }}
+                                            transition={{ duration: 0.2 }}>
+                                            <Icon className="w-5 h-5" />
+                                        </motion.div>
+                                        <motion.input
+                                            type={field.type}
+                                            name={field.name}
+                                            value={formData[field.name]}
+                                            onChange={handleInputChange}
+                                            disabled={isLoading}
+                                            className={`w-full pl-10 pr-4 py-3 border bg-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                                        transition-all duration-300 ${errors[field.name] ? 'border-red-500 shake' : 'border-gray-300'
+                                                } group-hover:border-blue-400`}
+                                            placeholder={field.placeholder}
+                                            whileFocus={{ scale: 1.02 }}
+                                            transition={{ duration: 0.2 }} />
+                                    </div>
+                                    <AnimatePresence>
+                                        {errors[field.name] && (
+                                            <motion.p
+                                                className="text-red-400 text-sm mt-1"
+                                                initial={{ opacity: 0, y: -10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -10 }}
+                                                transition={{ duration: 0.3 }}>
+                                                {errors[field.name]}
+                                            </motion.p>
+                                        )}
+                                    </AnimatePresence>
+                                </motion.div>
+                            )
+                        })}
 
-                        <motion.button 
-                            type="submit" 
+                        <motion.button
+                            type="submit"
                             disabled={isLoading}
                             className={`w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 px-4 
                             rounded-lg hover:from-blue-700 hover:to-purple-700 focus:ring-4 focus:ring-blue-200 transition-all duration-200 
@@ -221,7 +221,7 @@ export default function ForgotPassword() {
                                 className="absolute inset-0 bg-white/20"
                                 initial={{ x: '-100%' }}
                                 whileHover={{ x: '100%' }}
-                                transition={{ duration: 0.6 }}/>
+                                transition={{ duration: 0.6 }} />
                             <span className="relative z-10">{isLoading ? 'Sending...' : 'Send Reset Code'}</span>
                         </motion.button>
                     </form>

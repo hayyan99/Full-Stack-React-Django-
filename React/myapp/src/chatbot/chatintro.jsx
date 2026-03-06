@@ -1,6 +1,6 @@
 
 export default function ChatIntro({ onStart }) {
-    
+
     const particles = [
         { top: '10%', left: '15%', size: 8, color: '#60a5fa', duration: '3s', delay: '0s' },
         { top: '10%', left: '70%', size: 6, color: '#3b82f6', duration: '4s', delay: '0.5s' },
@@ -26,20 +26,20 @@ export default function ChatIntro({ onStart }) {
             </div>
             <div className="relative mt-8 left-3">
                 {particles.map((p, i) => (
-                <div key={i} className="absolute rounded-full opacity-60 float-animation -z-10"
-                    style={{ 
-                    top: p.top, 
-                    left: p.left, 
-                    right: p.right, 
-                    bottom: p.bottom, 
-                    width: `${p.size}px`, 
-                    height: `${p.size}px`, 
-                    backgroundColor: p.color,
-                    animationDuration: p.duration, 
-                    animationDelay: p.delay 
-                    }} />
+                    <div key={i} className="absolute rounded-full opacity-60 float-animation -z-10"
+                        style={{
+                            top: p.top,
+                            left: p.left,
+                            right: p.right,
+                            bottom: p.bottom,
+                            width: `${p.size}px`,
+                            height: `${p.size}px`,
+                            backgroundColor: p.color,
+                            animationDuration: p.duration,
+                            animationDelay: p.delay
+                        }} />
                 ))}
-                <img src="/images/robot.png" alt="AI Bot" className="relative z-10 h-74 drop-shadow-2xl"/>
+                <img src="/images/robot.png" alt="AI Bot" className="relative z-10 h-74 drop-shadow-2xl" />
             </div>
             <div className="mt-5">
                 <p className="text-gray-300 font-medium mb-3">How may I help you today!</p>
@@ -47,7 +47,7 @@ export default function ChatIntro({ onStart }) {
                 hover:bg-blue-600 hover:scale-105 transition-all duration-300 cursor-pointer">
                     Get Started
                 </button>
-            </div>      
+            </div>
         </div>
     )
 }

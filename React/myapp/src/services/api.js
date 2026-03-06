@@ -1,9 +1,9 @@
 const BASE_URL = 'http://localhost:8000/api/';
 
-const getCSRFToken = async() => {
-    const response = await fetch(`${BASE_URL}csrf-token/`,{
+const getCSRFToken = async () => {
+    const response = await fetch(`${BASE_URL}csrf-token/`, {
         credentials: 'include'
-    }); 
+    });
     const data = await response.json();
     return data.csrfToken;
 };
@@ -14,7 +14,7 @@ export const userLogin = async (credentials) => {
         headers: {
             'Content-Type': 'application/json', 'X-CSRFToken': await getCSRFToken(),
         },
-        credentials: 'include', 
+        credentials: 'include',
         body: JSON.stringify(credentials),
     });
     if (response.ok) {
@@ -36,7 +36,7 @@ export const userLogin = async (credentials) => {
 //             credentials: 'include', 
 //             body: JSON.stringify(credentials),
 //         });
-        
+
 //         // Check if response is JSON
 //         const contentType = response.headers.get('content-type');
 //         if (!contentType || !contentType.includes('application/json')) {
@@ -44,7 +44,7 @@ export const userLogin = async (credentials) => {
 //             console.error('Non-JSON response:', text);
 //             throw new Error('Server error - check console');
 //         }
-        
+
 //         if (response.ok) {
 //             return response.json();
 //         } else {
@@ -64,22 +64,22 @@ export const userRegister = async (userData) => {
         headers: {
             'Content-Type': 'application/json', 'X-CSRFToken': await getCSRFToken(),
         },
-        credentials: 'include', 
+        credentials: 'include',
         body: JSON.stringify(userData),
     });
-    
+
     if (response.ok) {
         return response.json();
     } else {
         const error = await response.json();
-        console.log('Registration error from backend:', error); 
+        console.log('Registration error from backend:', error);
         throw new Error(error.error || 'Failed to register');
     }
 }
 
 export const fetchTransactions = async () => {
     const response = await fetch(`${BASE_URL}transactions/`, {
-        credentials: 'include' 
+        credentials: 'include'
     });
     if (response.ok) {
         return response.json();
@@ -95,7 +95,7 @@ export const createTransaction = async (transaction) => {
         headers: {
             'Content-Type': 'application/json', 'X-CSRFToken': await getCSRFToken(),
         },
-        credentials: 'include', 
+        credentials: 'include',
         body: JSON.stringify(transaction)
     });
     if (response.ok) {

@@ -18,73 +18,73 @@ import { fetchTransactions } from './services/api'
 import ChatWidget from './chatbot/chatwidget'
 
 export default function App() {
-    const [transactions, setTransactions] = useState([])
-    const [isAuthenticated, setIsAuthenticated] = useState(() => {
-      const user =  JSON.parse(localStorage.getItem('user'))
-      return user ? user.isLoggedIn : false
-    })
-    const location = useLocation()
+  const [transactions, setTransactions] = useState([])
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    const user = JSON.parse(localStorage.getItem('user'))
+    return user ? user.isLoggedIn : false
+  })
+  const location = useLocation()
 
-    const deletetransaction = (id) => {
-      setTransactions(transactions.filter((tran) => tran.id !== id))
-    }
+  const deletetransaction = (id) => {
+    setTransactions(transactions.filter((tran) => tran.id !== id))
+  }
 
-    const isAuthRoute = [
-      '/login', 
-      '/signup', 
-      '/forgot-password', 
-      '/pin', 
-      '/change-password'].includes(location.pathname)
+  const isAuthRoute = [
+    '/login',
+    '/signup',
+    '/forgot-password',
+    '/pin',
+    '/change-password'].includes(location.pathname)
 
-    useEffect(() => {
-      const getTransactions = async () => {
-          if (!isAuthenticated) {
-              return; 
-          }
-          try {
-              const data = await fetchTransactions();
-              const normalizedData = data.transactions?.map(transaction => ({
-                  ...transaction,
-                  type: transaction.transaction_type,
-                  amount: parseFloat(transaction.amount)
-              })) || [];
-              setTransactions(normalizedData);
-          } catch (error) {
-              console.error('Failed to fetch transactions:', error);
-              setTransactions([]);
-              setIsAuthenticated(false);
-          }
-      };
-      getTransactions();
-    }, [isAuthenticated]);
+  useEffect(() => {
+    const getTransactions = async () => {
+      if (!isAuthenticated) {
+        return;
+      }
+      try {
+        const data = await fetchTransactions();
+        const normalizedData = data.transactions?.map(transaction => ({
+          ...transaction,
+          type: transaction.transaction_type,
+          amount: parseFloat(transaction.amount)
+        })) || [];
+        setTransactions(normalizedData);
+      } catch (error) {
+        console.error('Failed to fetch transactions:', error);
+        setTransactions([]);
+        setIsAuthenticated(false);
+      }
+    };
+    getTransactions();
+  }, [isAuthenticated]);
 
-    useEffect(() => {
-      setTimeout(() => {
-        if (!isAuthRoute) {
-          window.scrollTo(0, 0)
-          document.documentElement.scrollTop = 0
-          document.body.scrollTop = 0
-        } else {
-          window.scrollTo(0, 0)
-        }
-      }, 100)
-    }, [location, isAuthRoute])
+  useEffect(() => {
+    setTimeout(() => {
+      if (!isAuthRoute) {
+        window.scrollTo(0, 0)
+        document.documentElement.scrollTop = 0
+        document.body.scrollTop = 0
+      } else {
+        window.scrollTo(0, 0)
+      }
+    }, 100)
+  }, [location, isAuthRoute])
 
-    return (
+  return (
     <>
       <div className='bg-gray-50 min-h-screen flex flex-col'>
-        {!isAuthRoute && <Header setTransactions={setTransactions} isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated}/>}
+        {!isAuthRoute && <Header setTransactions={setTransactions} isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />}
         <div className="flex-1">
           <Routes>
-            <Route path="/" element={<Overview transactions={transactions} onDelete={deletetransaction} isAuthenticated={isAuthenticated} />}/>
-            <Route path="/transactions" element={<Transactions transactions={transactions} onDelete={deletetransaction} isAuthenticated={isAuthenticated}/>} />
-            <Route path="/analytics" element={<Analytics transactions={transactions} isAuthenticated={isAuthenticated}/>} />
+            <Route path="/" element={<Overview transactions={transactions} onDelete={deletetransaction} isAuthenticated={isAuthenticated} />} />
+            <Route path="/transactions" element={<Transactions transactions={transactions} onDelete={deletetransaction} isAuthenticated={isAuthenticated} />} />
+            <Route path="/analytics" element={<Analytics transactions={transactions} isAuthenticated={isAuthenticated} />} />
             <Route path="/help" element={<Help />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/login" element={<Signin onLogin={() => setIsAuthenticated(true)} />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/pin" element={<Pin />} /> 
+            <Route path="/pin" element={<Pin />} />
             <Route path="/change-password" element={<ChangePassword />} />
             <Route path="/contact" element={<Contact />} />
           </Routes>

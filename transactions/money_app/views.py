@@ -121,6 +121,7 @@ def transaction_detail(request, transaction_id):
         return JsonResponse({'message': 'Transaction deleted successfully'})
 
 # ---------------- User Auth ----------------
+@csrf_exempt
 @ratelimit(key='ip', rate='5/m', method='POST', block= False)
 @require_http_methods(["POST"])
 def user_login(request):
@@ -291,6 +292,7 @@ def contact_info(request):
     } for contact in contacts]
     return JsonResponse({'contacts': data})
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def chatbot_query(request):
     user_id = request.session.get('user_id')
@@ -318,16 +320,17 @@ def chatbot_query(request):
         ]
         
         # Get user transaction context
+        from decimal import Decimal
         transactions = Transaction.objects.filter(user=user)[:20]
-        total_income = sum(t.amount for t in transactions if t.transaction_type == 'income')
-        total_expense = sum(t.amount for t in transactions if t.transaction_type == 'expense')
+        total_income = sum((Decimal(str(t.amount)) for t in transactions if t.transaction_type == 'income'), Decimal('0'))
+        total_expense = sum((Decimal(str(t.amount)) for t in transactions if t.transaction_type == 'expense'), Decimal('0'))
         
         # Category breakdown
         from collections import defaultdict
-        expenses_by_category = defaultdict(float)
+        expenses_by_category = defaultdict(Decimal)
         for t in transactions:
             if t.transaction_type == 'expense':
-                expenses_by_category[t.category] += t.amount
+                expenses_by_category[t.category] += Decimal(str(t.amount))
 
         category_text = ", ".join([f"{cat}: {amt}PKR" for cat, amt in expenses_by_category.items()])
 

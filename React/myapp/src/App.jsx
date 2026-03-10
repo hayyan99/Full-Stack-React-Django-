@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import './App.css'
 import Header from './components/header'
 import Footer from './components/footer'
@@ -81,11 +81,11 @@ export default function App() {
             <Route path="/analytics" element={<Analytics transactions={transactions} isAuthenticated={isAuthenticated} />} />
             <Route path="/help" element={<Help />} />
             <Route path="/privacy" element={<Privacy />} />
-            <Route path="/login" element={<Signin onLogin={() => setIsAuthenticated(true)} />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/pin" element={<Pin />} />
-            <Route path="/change-password" element={<ChangePassword />} />
+            <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <Signin onLogin={() => setIsAuthenticated(true)} />} />
+            <Route path="/signup" element={isAuthenticated ? <Navigate to="/" replace /> : <Signup />} />
+            <Route path="/forgot-password" element={isAuthenticated ? <Navigate to="/" replace /> : <ForgotPassword />} />
+            <Route path="/pin" element={isAuthenticated ? <Navigate to="/" replace /> : <Pin />} />
+            <Route path="/change-password" element={isAuthenticated ? <Navigate to="/" replace /> : <ChangePassword />} />
             <Route path="/contact" element={<Contact />} />
           </Routes>
           {isAuthenticated && <ChatWidget />}

@@ -74,7 +74,9 @@ export default function SignUp() {
                     password: formData.password
                 })
                 setIsSuccess(true)
-                setTimeout(() => navigate('/login'), 2000)
+                setTimeout(() => {
+                    navigate('/login')
+                }, 500)
             }
             catch (error) {
                 setErrors({ submit: error?.message || 'Registration failed' })

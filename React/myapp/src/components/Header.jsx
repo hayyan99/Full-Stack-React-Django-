@@ -142,18 +142,20 @@ export default function Header({ setTransactions, isAuthenticated, setIsAuthenti
                                 hover:bg-blue-700 sm:text-sm text-sm md:text-sm cursor-pointer">
                                     <CirclePlus className="h-4 w-4" /> Add Transaction
                                 </button>
-                                <div className="ml-3 hidden md:flex items-center gap-2 cursor-pointer" onClick={async () => {
-                                    try {
-                                        await userLogout();
-                                        setIsAuthenticated(false);
-                                        localStorage.removeItem('user');
-                                        navigate('/');
-                                    } catch (error) {
-                                        alert('Logout failed: ' + error.message);
-                                    }
-                                }}>
+                                <div className="ml-3 hidden md:flex items-center gap-4">
                                     <Switcher />
-                                    <LogOut className="text-white w-5 h-5" />
+                                    <div className="flex items-center gap-2 cursor-pointer" onClick={async () => {
+                                        try {
+                                            await userLogout();
+                                            setIsAuthenticated(false);
+                                            localStorage.removeItem('user');
+                                            navigate('/');
+                                        } catch (error) {
+                                            alert('Logout failed: ' + error.message);
+                                        }
+                                    }}>
+                                        <LogOut className="text-white w-5 h-5" />
+                                    </div>
                                 </div>
                             </>
                         ) : (

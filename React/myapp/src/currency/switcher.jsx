@@ -12,6 +12,11 @@ const currencies = [
     name: "US Dollar",
     flag: "https://flagcdn.com/w40/us.png",
   },
+  {
+    code: "EUR",
+    name: "Euro",
+    flag: "https://flagcdn.com/w40/eu.png",
+  }
 ];
 
 export default function Switcher() {

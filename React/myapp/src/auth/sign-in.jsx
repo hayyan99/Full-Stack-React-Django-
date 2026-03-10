@@ -86,8 +86,10 @@ function Signin({ onLogin }) {
                     isLoggedIn: true
                 }))
                 setIsSuccess(true)
-                onLogin?.()
-                setTimeout(() => navigate('/'), 1000)
+                setTimeout(() => {
+                    onLogin?.()
+                    navigate('/')
+                }, 500)
             }
             catch (error) {
                 setIsSuccess(false)

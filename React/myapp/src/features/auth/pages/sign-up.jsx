@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, Mail, Lock, User, Phone, CheckCircle } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion' // eslint-disable-line
-import { userRegister } from '../services/api'
+import { userRegister } from '@/features/auth/api/auth.api'
 
 export default function SignUp() {
     const navigate = useNavigate()

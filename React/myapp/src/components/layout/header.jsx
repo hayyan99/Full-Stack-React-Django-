@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom";
 import { CirclePlus, X, Wallet, LogOut, Menu, ChartColumnIncreasing, ChartNoAxesCombined, LogIn, SwitchCamera } from 'lucide-react';
-import { createTransaction, userLogout } from "../services/api";
-import Switcher from "../currency/switcher";
+import { createTransaction } from "@/features/transactions/api/transactions.api";
+import { userLogout } from "@/features/auth/api/auth.api";
+import Switcher from "@/features/currency/components/switcher";
 
 export default function Header({ setTransactions, isAuthenticated, setIsAuthenticated }) {
     const [isOpen, setIsOpen] = useState(false)

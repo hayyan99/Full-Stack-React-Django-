@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, Mail, Lock, CheckCircle, Sparkles } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion' //eslint-disable-line
-import { userLogin } from '../services/api'
+import { userLogin } from '@/features/auth/api/auth.api'
 
 const FloatingParticles = () => {
     const particles = useMemo(() => Array.from({ length: 20 }, (_, i) => ({

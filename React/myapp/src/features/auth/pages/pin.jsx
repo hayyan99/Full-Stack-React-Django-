@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion' // eslint-disable-line
 import { CheckCircle, Mail, Sparkles } from 'lucide-react'
-import { forgotPassword, verifyPin } from '../../services/api'
+import { forgotPassword, verifyPin } from '@/features/auth/api/auth.api'
 
 // Floating particles component
 const FloatingParticles = () => {

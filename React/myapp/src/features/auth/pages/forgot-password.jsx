@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Mail, Shield, CheckCircle } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion' // eslint-disable-line
-import { forgotPassword } from '../../services/api'
+import { forgotPassword } from '@/features/auth/api/auth.api'
 
 const AnimatedLockIllustration = () => {
     return (

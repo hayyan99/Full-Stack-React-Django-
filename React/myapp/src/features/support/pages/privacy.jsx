@@ -11,7 +11,7 @@ import {
   Scale,
   Phone,
 } from "lucide-react";
-import { fetchContactInfo } from "../services/api";
+import { fetchContactInfo } from "@/features/support/api/support.api";
 import { useState, useEffect } from "react";
 
 function Privacy() {

@@ -1,14 +1,4 @@
-import constant from './constant';
-
-const BASE_URL = constant.BASE_URL;
-
-const getCSRFToken = async () => {
-  const response = await fetch(`${BASE_URL}csrf-token/`, {
-    credentials: 'include'
-  });
-  const data = await response.json();
-  return data.csrfToken;
-};
+import { BASE_URL, getCSRFToken } from '@/lib/api/client';
 
 export const sendChatMessage = async (message, sessionId) => {
   const response = await fetch(`${BASE_URL}chatbot/`, {

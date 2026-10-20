@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Search, Trash2 } from "lucide-react";
-import { deleteTransaction } from "../services/api";
+import { deleteTransaction } from "@/features/transactions/api/transactions.api";
 
 function Lists({ tran = [], onDelete }) {
     const [input, setInput] = useState("")

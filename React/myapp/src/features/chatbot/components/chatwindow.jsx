@@ -2,7 +2,7 @@ import { useState } from 'react'
 import ChatHeader from './chatheader'
 import ChatBody from './chatbody'
 import ChatIntro from './chatintro'
-import { sendChatMessage } from '../services/chatapi'
+import { sendChatMessage } from '@/features/chatbot/api/chat.api'
 
 export default function ChatWindow() {
   const [started, setStarted] = useState(false);

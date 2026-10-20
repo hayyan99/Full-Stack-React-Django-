@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 export default function Footer() {
     // const navigate = useNavigate();
     const socialMedia = [
-        {src: "./images/facebook.png", alt: "facebook", url: "https://www.facebook.com/"},
-        {src: "./images/insta.png", alt: "instagram", url: "https://www.instagram.com/"},
-        {src: "./images/linki.png", alt: "linkedin", url: "https://www.linkedin.com/"},
-        {src: "./images/twitter.png", alt: "twitter", url: "https://x.com/"},
+        {src: "/images/facebook.png", alt: "facebook", url: "https://www.facebook.com/"},
+        {src: "/images/insta.png", alt: "instagram", url: "https://www.instagram.com/"},
+        {src: "/images/linki.png", alt: "linkedin", url: "https://www.linkedin.com/"},
+        {src: "/images/twitter.png", alt: "twitter", url: "https://x.com/"},
     ];
 
     const links = [

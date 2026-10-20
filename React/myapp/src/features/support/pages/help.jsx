@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { fetchFAQs } from '../services/api';
+import { fetchFAQs } from '@/features/support/api/support.api';
 import { Link } from 'react-router-dom';
 
 function Help() {

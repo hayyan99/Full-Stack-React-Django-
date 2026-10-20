@@ -1,4 +1,4 @@
-import Capacity from '../components/capacity.jsx';
+import Capacity from '@/features/transactions/components/capacity';
 import { Wallet, ChartColumnIncreasing, ChartNoAxesCombined } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 

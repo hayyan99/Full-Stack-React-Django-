@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, Lock, CheckCircle2, Key } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion' // eslint-disable-line
-import { changePassword } from '../../services/api'
+import { changePassword } from '@/features/auth/api/auth.api'
 
 // Password strength indicator
 const PasswordStrengthIndicator = ({ password }) => {

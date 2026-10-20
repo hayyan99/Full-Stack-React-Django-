@@ -1,0 +1,16 @@
+venv/
+transactions/venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.log
+db.sqlite3
+node_modules/
+.DS_Store

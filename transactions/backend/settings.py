@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'adminsortable2',
     'money_app',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -143,6 +144,25 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp-relay.brevo.com'
 # EMAIL_PORT = 587
@@ -157,4 +177,7 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 # VERIFIED SENDER (Brevo → Senders)
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
+
+# GOOGLE API KEY FOR CHATBOT
+GOOGLE_API_KEY = config('GOOGLE_API_KEY')
 

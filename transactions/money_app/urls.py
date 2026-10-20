@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('api/csrf-token/', views.csrf_token, name='csrf_token'),
     path('api/login/', views.user_login, name='clients'),
     path('api/logout/', views.user_logout, name='logout'),
     path('api/register/', views.register, name='register'),
@@ -12,4 +13,5 @@ urlpatterns = [
     path('api/change-password/', views.change_password),
     path('api/faqs/', views.faq_list, name='faqs'),
     path('api/contacts/', views.contact_info, name='contacts'),
+    path('api/chatbot/', views.chatbot_query, name='chatbot_query'),
 ]

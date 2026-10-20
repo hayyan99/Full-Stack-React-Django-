@@ -4,11 +4,20 @@ from django.views.decorators.http import require_http_methods
 from django.core.mail import send_mail, get_connection
 from django.utils import timezone
 import json
+from django.middleware.csrf import get_token
 from django.conf import settings
+from .serializers import UserLoginSerializer, UserRegisterSerializer, TransactionSerializer
 from .models import Transaction, UserProfile, PasswordResetPin, FAQ, ContactInfo
+from django_ratelimit.decorators import ratelimit
+from .chatbot_services import get_chatbot_response
+from .models import ChatMessage
+
+# -----------CSRF Exempt Decorator-----------
+@require_http_methods(["GET"])
+def csrf_token(request):
+    return JsonResponse({'csrfToken': get_token(request)})
 
 # ---------------- Transactions ----------------
-@csrf_exempt
 @require_http_methods(["GET","POST"])
 def transactions(request):
     user_id = request.session.get('user_id')
@@ -36,14 +45,13 @@ def transactions(request):
 
     elif request.method == 'POST':
         try:
-            data = json.loads(request.body)
+            serializer = TransactionSerializer(data=json.loads(request.body))
+            if not serializer.is_valid():
+                first_error = next(iter(serializer.errors.values()))[0]
+                return JsonResponse({'error': first_error}, status=400)
+            
             transaction = Transaction.objects.create(
-                user=user,
-                title=data['title'],
-                amount=data['amount'],
-                transaction_type=data['transaction_type'],
-                category=data['category'],
-                description=data.get('description', data['title'])
+                user=user, **serializer.validated_data
             )
             return JsonResponse({
                 'id': transaction.id,
@@ -58,7 +66,6 @@ def transactions(request):
             return JsonResponse({'error': str(e)}, status=400)
 
 # ---------------- Transaction Detail ----------------
-@csrf_exempt
 @require_http_methods(["GET", "PUT", "DELETE"])
 def transaction_detail(request, transaction_id):
     user_id = request.session.get('user_id')
@@ -86,7 +93,11 @@ def transaction_detail(request, transaction_id):
 
     elif request.method == 'PUT':
         try:
-            data = json.loads(request.body)
+            serializer = TransactionSerializer(data=json.loads(request.body))
+            if not serializer.is_valid():
+                first_error = next(iter(serializer.errors.values()))[0]
+                return JsonResponse({'error': first_error}, status=400)
+            data = serializer.validated_data
             transaction.title = data['title']
             transaction.amount = data['amount']
             transaction.transaction_type = data['transaction_type']
@@ -111,12 +122,18 @@ def transaction_detail(request, transaction_id):
 
 # ---------------- User Auth ----------------
 @csrf_exempt
+@ratelimit(key='ip', rate='5/m', method='POST', block= False)
 @require_http_methods(["POST"])
-def user_login(request):   
+def user_login(request):
+    if getattr(request, 'limited', False):
+        return JsonResponse({'error': 'Too many login attempts. Please try again later.'}, status=429)
     try:
-        data = json.loads(request.body)
-        email = data.get('email')
-        password = data.get('password')
+        serializer = UserLoginSerializer(data=json.loads(request.body))
+        if not serializer.is_valid():
+            first_error = next(iter(serializer.errors.values()))[0]
+            return JsonResponse({'error': first_error}, status=400)
+        email = serializer.validated_data['email']
+        password = serializer.validated_data['password']
         
         try:
             user = UserProfile.objects.get(email=email)
@@ -137,17 +154,19 @@ def user_login(request):
             return JsonResponse({'error': 'Password is invalid'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
-
-@csrf_exempt
+    
+@ratelimit(key='ip', rate='3/m', method='POST', block= False)
 @require_http_methods(["POST"])
 def register(request):
+    if getattr(request, 'limited', False):
+        return JsonResponse({'error': 'Too many registration attempts. Please try again later.'}, status=429)
     try:
-        data = json.loads(request.body)
-        if UserProfile.objects.filter(username=data['username']).exists():
-            return JsonResponse({'error': 'Username already exists'}, status=400)
-        if UserProfile.objects.filter(email=data['email']).exists():
-            return JsonResponse({'error': 'Email already exists'}, status=400)
-
+        serializer = UserRegisterSerializer(data=json.loads(request.body))
+        if not serializer.is_valid():
+            first_error = next(iter(serializer.errors.values()))[0]
+            return JsonResponse({'error': first_error}, status=400)
+        
+        data = serializer.validated_data
         user = UserProfile(
             username=data['username'],
             email=data['email'],
@@ -163,14 +182,12 @@ def register(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
-@csrf_exempt
 @require_http_methods(["POST"])
 def user_logout(request):
     request.session.flush()
     return JsonResponse({'message': 'Logout successful'})
 
 # ---------------- Password Reset ----------------
-@csrf_exempt
 @require_http_methods(["POST"])
 def forgot_password(request):
     try:
@@ -201,7 +218,6 @@ def forgot_password(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-@csrf_exempt
 @require_http_methods(["POST"])
 def verify_pin(request):
     try:
@@ -225,7 +241,6 @@ def verify_pin(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
-@csrf_exempt
 @require_http_methods(["POST"])
 def change_password(request):
     try:
@@ -252,7 +267,6 @@ def change_password(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
-@csrf_exempt
 @require_http_methods(['GET'])
 def faq_list(request):
     faqs = FAQ.objects.filter(is_active=True)
@@ -265,8 +279,6 @@ def faq_list(request):
     } for faq in faqs]
     return JsonResponse({'faqs': data})
 
-
-@csrf_exempt
 @require_http_methods(['GET'])
 def contact_info(request):
     contacts = ContactInfo.objects.filter(is_active=True)
@@ -279,3 +291,67 @@ def contact_info(request):
         'updated_at': contact.updated_at.isoformat()
     } for contact in contacts]
     return JsonResponse({'contacts': data})
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def chatbot_query(request):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        return JsonResponse({'error': 'Authentication required'}, status=401)
+    
+    try:
+        user = UserProfile.objects.get(id=user_id)
+        data = json.loads(request.body)
+        user_message = data.get('message', '')
+        session_id = data.get('session_id', 'default')
+        
+        if not user_message:
+            return JsonResponse({'error': 'Message is required'}, status=400)
+        
+        # Get last 5 messages for context
+        recent_messages = ChatMessage.objects.filter(
+            user=user, 
+            session_id=session_id
+        )[:5]
+        
+        chat_history = [
+            {'user': msg.message, 'bot': msg.response} 
+            for msg in reversed(recent_messages)
+        ]
+        
+        # Get user transaction context
+        from decimal import Decimal
+        transactions = Transaction.objects.filter(user=user)[:20]
+        total_income = sum((Decimal(str(t.amount)) for t in transactions if t.transaction_type == 'income'), Decimal('0'))
+        total_expense = sum((Decimal(str(t.amount)) for t in transactions if t.transaction_type == 'expense'), Decimal('0'))
+        
+        # Category breakdown
+        from collections import defaultdict
+        expenses_by_category = defaultdict(Decimal)
+        for t in transactions:
+            if t.transaction_type == 'expense':
+                expenses_by_category[t.category] += Decimal(str(t.amount))
+
+        category_text = ", ".join([f"{cat}: {amt}PKR" for cat, amt in expenses_by_category.items()])
+
+        user_context = f"User's recent data: Total income: {total_income}PKR, Total expenses: {total_expense}PKR. Expense breakdown by category: {category_text if category_text else 'No expenses recorded yet'}"
+
+        # Get response
+        response = get_chatbot_response(user_message, chat_history, user_context)
+        
+        # Save to database
+        ChatMessage.objects.create(
+            user=user,
+            message=user_message,
+            response=response,
+            session_id=session_id
+        )
+        
+        return JsonResponse({
+            'response': response,
+            'timestamp': timezone.now().strftime("%Y-%m-%d %I:%M:%S %p")
+        })
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+

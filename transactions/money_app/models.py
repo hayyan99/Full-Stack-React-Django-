@@ -5,7 +5,6 @@ from django.utils import timezone
 from datetime import timedelta
 import random, string, re
 
-
 def validate_phone_number(value):
     if not re.match(r'^\+\d+$', value):
         raise ValidationError('Phone number must start with + followed by digits only (e.g., +92xxxxxxxxx).')
@@ -91,3 +90,12 @@ class ContactInfo(models.Model):
         ordering = ['contact_type']
 
 
+class ChatMessage(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    message = models.TextField()
+    response = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    session_id = models.CharField(max_length=100)
+    
+    class Meta:
+        ordering = ['-timestamp']
